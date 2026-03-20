@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AllJob.API/AllJob.API.csproj" />
+  <Project Path="AllJob.Application/AllJob.Application.csproj" />
+  <Project Path="AllJob.Domain/AllJob.Domain.csproj" />
+  <Project Path="AllJob.Persistence/AllJob.Persistence.csproj" />
+</Solution>

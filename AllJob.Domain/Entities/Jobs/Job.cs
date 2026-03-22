@@ -1,4 +1,5 @@
 ﻿using AllJob.Domain.Common;
+using AllJob.Domain.Enums;
 
 namespace AllJob.Domain.Entities.Jobs;
 
@@ -11,7 +12,7 @@ public class Job : BaseEntity
     public decimal? SalaryMin { get; set; }
     public decimal? SalaryMax { get; set; }
     public bool IsRemote { get; set; }
-    public string Status { get; set; } = string.Empty;
+    public JobStatus Status { get; set; } 
     public DateTime ExpiresAt { get; set; }
 
 

@@ -1,4 +1,5 @@
 ﻿using AllJob.Domain.Common;
+using AllJob.Domain.Enums;
 
 namespace AllJob.Domain.Entities.Applications;
 
@@ -8,6 +9,6 @@ public class Application : BaseEntity
     public Guid UserId { get; set; }
     public string? CoverLetter { get; set; }
     public string CvUrl { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
+    public ApplicationStatus Status { get; set; } 
     public DateTime AppliedAt { get; set; }
 }

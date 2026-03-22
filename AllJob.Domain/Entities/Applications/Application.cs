@@ -1,4 +1,6 @@
 ﻿using AllJob.Domain.Common;
+using AllJob.Domain.Entities.Auth;
+using AllJob.Domain.Entities.Jobs;
 using AllJob.Domain.Enums;
 
 namespace AllJob.Domain.Entities.Applications;
@@ -11,4 +13,7 @@ public class Application : BaseEntity
     public string CvUrl { get; set; } = string.Empty;
     public ApplicationStatus Status { get; set; } 
     public DateTime AppliedAt { get; set; }
+
+    public Job Job { get; set; } = null!;
+    public User User { get; set; } = null!;
 }

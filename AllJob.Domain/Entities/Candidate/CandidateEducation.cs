@@ -11,4 +11,7 @@ public class CandidateEducation : BaseEntity
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
+    public CandidateProfile CandidateProfile { get; set; } = null!;
+
+
 }

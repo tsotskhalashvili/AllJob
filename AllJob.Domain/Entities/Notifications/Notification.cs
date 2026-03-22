@@ -1,4 +1,5 @@
 ﻿using AllJob.Domain.Common;
+using AllJob.Domain.Entities.Auth;
 using AllJob.Domain.Enums;
 
 namespace AllJob.Domain.Entities.Notifications;
@@ -10,4 +11,6 @@ public class Notification : BaseEntity
     public NotificationType Type { get; set; } 
     public string Message { get; set; } = string.Empty;
     public bool IsRead { get; set; }
+
+    public User User { get; set; } = null!;
 }

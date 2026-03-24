@@ -2,5 +2,5 @@
   <Project Path="AllJob.API/AllJob.API.csproj" />
   <Project Path="AllJob.Application/AllJob.Application.csproj" />
   <Project Path="AllJob.Domain/AllJob.Domain.csproj" />
-  <Project Path="AllJob.Persistence/AllJob.Persistence.csproj" />
+  <Project Path="AllJob.Persistence/AllJob.Persistence.csproj" Id="3e9ae8e7-c957-46f7-bc49-8c366858af65" />
 </Solution>

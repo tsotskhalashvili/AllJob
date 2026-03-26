@@ -25,7 +25,7 @@ public class NotificationConfiguration : BaseEntityConfiguration<Notification>
             .HasMaxLength(1000);
 
         builder.Property(x => x.Type)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
+            
     }
 }

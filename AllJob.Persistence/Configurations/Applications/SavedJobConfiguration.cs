@@ -19,5 +19,7 @@ public class SavedJobConfiguration : IEntityTypeConfiguration<SavedJob>
             .WithMany(x => x.SavedJobs)
             .HasForeignKey(x => x.JobId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(x => !x.Job.IsDeleted && !x.User.IsDeleted);
     }
 }

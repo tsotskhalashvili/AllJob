@@ -19,5 +19,7 @@ public class JobSkillConfiguration : IEntityTypeConfiguration<JobSkill>
             .WithMany(x => x.JobSkills)
             .HasForeignKey(x => x.SkillId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(x => !x.Job.IsDeleted && !x.Skill.IsDeleted);
     }
 }

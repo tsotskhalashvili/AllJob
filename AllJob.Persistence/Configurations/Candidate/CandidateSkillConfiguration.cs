@@ -19,5 +19,7 @@ public class CandidateSkillConfiguration : IEntityTypeConfiguration<CandidateSki
             .WithMany(x => x.CandidateSkills)
             .HasForeignKey(x => x.SkillId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(x => !x.CandidateProfile.IsDeleted && !x.Skill.IsDeleted);
     }
 }

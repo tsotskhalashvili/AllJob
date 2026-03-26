@@ -29,7 +29,7 @@ public class ApplicationConfiguration : BaseEntityConfiguration<Application>
             .HasMaxLength(512);
 
         builder.Property(x => x.Status)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
+           
     }
 }

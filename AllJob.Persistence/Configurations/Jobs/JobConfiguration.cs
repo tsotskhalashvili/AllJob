@@ -30,12 +30,12 @@ public class JobConfiguration : BaseEntityConfiguration<Job>
             .HasMaxLength(5000);
 
         builder.Property(x => x.WorkType)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
+
 
         builder.Property(x => x.Status)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
+           
 
         builder.Property(x => x.SalaryMin)
             .HasColumnType("decimal(18,2)");

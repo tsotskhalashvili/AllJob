@@ -19,5 +19,7 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
             .WithMany(x => x.UserRoles)
             .HasForeignKey(x => x.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(x => !x.User.IsDeleted && !x.Role.IsDeleted);
     }
 }

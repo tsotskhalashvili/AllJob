@@ -26,7 +26,7 @@ public class PaymentConfiguration : BaseEntityConfiguration<Payment>
             .HasColumnType("decimal(18,2)");
 
         builder.Property(x => x.Status)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
+            
     }
 }

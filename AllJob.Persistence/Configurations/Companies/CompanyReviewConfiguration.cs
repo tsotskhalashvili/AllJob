@@ -32,6 +32,6 @@ public class CompanyReviewConfiguration : BaseEntityConfiguration<CompanyReview>
         builder.Property(x => x.Rating)
             .IsRequired();
 
-        builder.HasCheckConstraint("CK_CompanyReviews_Rating", "[Rating] >= 1 AND [Rating] <= 5");
+        
     }
 }

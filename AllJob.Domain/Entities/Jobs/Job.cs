@@ -24,7 +24,7 @@ public class Job : BaseEntity
     public Address Address { get; set; } = null!;
      
     public ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
-    public ICollection<Application> Applications { get; set; } = new List<Application>();
+    public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
     public ICollection<SavedJob> SavedJobs { get; set; } = new List<SavedJob>();
 
 

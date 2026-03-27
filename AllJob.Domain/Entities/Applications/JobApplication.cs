@@ -5,7 +5,7 @@ using AllJob.Domain.Enums;
 
 namespace AllJob.Domain.Entities.Applications;
 
-public class Application : BaseEntity
+public class JobApplication : BaseEntity
 {
     public Guid JobId { get; set; }
     public Guid UserId { get; set; }

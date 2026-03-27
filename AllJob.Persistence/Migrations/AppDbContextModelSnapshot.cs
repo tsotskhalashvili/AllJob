@@ -22,7 +22,7 @@ namespace AllJob.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AllJob.Domain.Entities.Applications.Application", b =>
+            modelBuilder.Entity("AllJob.Domain.Entities.Applications.JobApplication", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +69,7 @@ namespace AllJob.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Applications");
+                    b.ToTable("JoApplications");
                 });
 
             modelBuilder.Entity("AllJob.Domain.Entities.Applications.SavedJob", b =>
@@ -849,7 +849,7 @@ namespace AllJob.Persistence.Migrations
                     b.ToTable("Plans");
                 });
 
-            modelBuilder.Entity("AllJob.Domain.Entities.Applications.Application", b =>
+            modelBuilder.Entity("AllJob.Domain.Entities.Applications.JobApplication", b =>
                 {
                     b.HasOne("AllJob.Domain.Entities.Jobs.Job", "Job")
                         .WithMany("Applications")

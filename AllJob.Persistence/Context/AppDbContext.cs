@@ -41,7 +41,7 @@ public class AppDbContext : DbContext
     public DbSet<JobSkill> JobSkills => Set<JobSkill>();
 
     // Applications
-    public DbSet<Application> Applications => Set<Application>();
+    public DbSet<JobApplication> JoApplications => Set<JobApplication>(); 
     public DbSet<SavedJob> SavedJobs => Set<SavedJob>();
 
     // Notifications
@@ -96,4 +96,4 @@ public class AppDbContext : DbContext
 
         return await base.SaveChangesAsync(cancellationToken);
     }
-}
+} 

@@ -465,7 +465,7 @@ namespace AllJob.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Applications",
+                name: "JoApplications",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -482,15 +482,15 @@ namespace AllJob.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Applications", x => x.Id);
+                    table.PrimaryKey("PK_JoApplications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Applications_Jobs_JobId",
+                        name: "FK_JoApplications_Jobs_JobId",
                         column: x => x.JobId,
                         principalTable: "Jobs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Applications_Users_UserId",
+                        name: "FK_JoApplications_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -547,16 +547,6 @@ namespace AllJob.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Applications_JobId",
-                table: "Applications",
-                column: "JobId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Applications_UserId",
-                table: "Applications",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CandidateEducations_CandidateProfileId",
                 table: "CandidateEducations",
                 column: "CandidateProfileId");
@@ -607,6 +597,16 @@ namespace AllJob.Persistence.Migrations
                 name: "IX_CompanySubscriptions_PlanId",
                 table: "CompanySubscriptions",
                 column: "PlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoApplications_JobId",
+                table: "JoApplications",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JoApplications_UserId",
+                table: "JoApplications",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobCategories_Slug",
@@ -693,9 +693,6 @@ namespace AllJob.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Applications");
-
-            migrationBuilder.DropTable(
                 name: "CandidateEducations");
 
             migrationBuilder.DropTable(
@@ -709,6 +706,9 @@ namespace AllJob.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "CompanySubscriptions");
+
+            migrationBuilder.DropTable(
+                name: "JoApplications");
 
             migrationBuilder.DropTable(
                 name: "JobSkills");

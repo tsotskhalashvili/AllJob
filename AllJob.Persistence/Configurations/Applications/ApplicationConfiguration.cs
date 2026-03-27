@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AllJob.Persistence.Configurations.Applications;
 
-public class ApplicationConfiguration : BaseEntityConfiguration<Application>
+public class ApplicationConfiguration : BaseEntityConfiguration<JobApplication>
 {
-    public override void Configure(EntityTypeBuilder<Application> builder)
+    public override void Configure(EntityTypeBuilder<JobApplication> builder)
     {
         base.Configure(builder);
 

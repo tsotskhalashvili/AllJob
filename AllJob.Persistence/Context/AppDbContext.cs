@@ -61,39 +61,5 @@ public class AppDbContext : DbContext
             Assembly.GetExecutingAssembly());
     }
 
-    public override async Task<int> SaveChangesAsync(
-        CancellationToken cancellationToken = default)
-    {
-        var now = DateTime.UtcNow;
-
-        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
-        {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedAt = now;
-                    entry.Entity.UpdatedAt = null;
-                    entry.Entity.IsDeleted = false;
-                    entry.Entity.DeletedAt = null;
-                    break;
-
-                case EntityState.Modified:
-                    entry.Property(x => x.CreatedAt).IsModified = false;
-                    entry.Property(x => x.IsDeleted).IsModified = false;
-                    entry.Property(x => x.DeletedAt).IsModified = false;
-                    entry.Entity.UpdatedAt = now;
-                    break;
-
-                case EntityState.Deleted:
-                    entry.State = EntityState.Modified;
-                    entry.Property(x => x.CreatedAt).IsModified = false;
-                    entry.Entity.IsDeleted = true;
-                    entry.Entity.DeletedAt = now;
-                    entry.Entity.UpdatedAt = now;
-                    break;
-            }
-        }
-
-        return await base.SaveChangesAsync(cancellationToken);
-    }
+  
 } 

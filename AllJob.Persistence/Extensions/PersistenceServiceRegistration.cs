@@ -1,5 +1,8 @@
-﻿using AllJob.Persistence.Context;
+﻿using AllJob.Application.Interfaces;
+using AllJob.Application.Interfaces.Repositories;
+using AllJob.Persistence.Context;
 using AllJob.Persistence.Interceptors;
+using AllJob.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +25,11 @@ public static class PersistenceServiceRegistration
          .AddInterceptors(
              sp.GetRequiredService<AuditableEntityInterceptor>(),
              sp.GetRequiredService<SoftDeleteInterceptor>()));
+
+        services.AddScoped(typeof(IGenericRepository<>),
+            typeof(GenericRepository<>));
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
         return services;

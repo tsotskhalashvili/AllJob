@@ -1,4 +1,4 @@
-﻿namespace AllJob.Application.DTOs.Candidate;
+namespace AllJob.Application.DTOs.Candidate;
 
 public record CandidateResponseDto(
     Guid Id,
@@ -10,5 +10,7 @@ public record CandidateResponseDto(
     string Country,
     string City,
     List<string> Skills,
+    List<ExperienceDto> Experiences,
+    List<EducationDto> Educations,
     DateTime CreatedAt
 );

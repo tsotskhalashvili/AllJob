@@ -1,4 +1,4 @@
-﻿namespace AllJob.Application.DTOs.Company;
+namespace AllJob.Application.DTOs.Company;
 
 public record CompanyResponseDto(
     Guid Id,

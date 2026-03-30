@@ -1,4 +1,5 @@
-﻿namespace AllJob.Application.DTOs.Candidate;
+namespace AllJob.Application.DTOs.Candidate;
+
 
 public record UpdateCandidateProfileDto(
     string FirstName,

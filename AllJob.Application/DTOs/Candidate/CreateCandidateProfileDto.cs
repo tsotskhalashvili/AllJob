@@ -1,4 +1,4 @@
-﻿namespace AllJob.Application.DTOs.Candidate;
+namespace AllJob.Application.DTOs.Candidate;
 
 public record CreateCandidateProfileDto(
     string FirstName,

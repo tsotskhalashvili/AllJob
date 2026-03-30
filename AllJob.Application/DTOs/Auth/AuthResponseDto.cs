@@ -1,4 +1,4 @@
-﻿namespace AllJob.Application.DTOs.Auth;
+namespace AllJob.Application.DTOs.Auth;
 
 public record AuthResponseDto(
     string AccessToken,

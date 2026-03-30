@@ -1,5 +1,4 @@
-﻿namespace AllJob.Application.DTOs.Common;
-
+namespace AllJob.Application.DTOs.Common;
 
 public record PagedResponseDto<T>(
     IReadOnlyList<T> Items,
@@ -8,7 +7,7 @@ public record PagedResponseDto<T>(
     int PageSize
 )
 {
-  
+   
     public int TotalPages => (int)Math.Ceiling(
         (double)TotalCount / PageSize);
 

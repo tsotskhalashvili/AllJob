@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories;
+using AllJob.Application.Settings;
 using AllJob.Persistence.Context;
 using AllJob.Persistence.Interceptors;
 using AllJob.Persistence.Repositories;
@@ -29,7 +30,11 @@ public static class PersistenceServiceRegistration
         services.AddScoped(typeof(IGenericRepository<>),
             typeof(GenericRepository<>));
 
+      
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
+
 
 
         return services;

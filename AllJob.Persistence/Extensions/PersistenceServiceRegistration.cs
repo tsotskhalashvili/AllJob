@@ -20,6 +20,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<AuditableEntityInterceptor>();
         services.AddScoped<SoftDeleteInterceptor>();
 
+
         services.AddDbContext<AppDbContext>((sp, options) =>
      options.UseSqlServer(
          configuration.GetConnectionString("DefaultConnection"))
@@ -27,13 +28,19 @@ public static class PersistenceServiceRegistration
              sp.GetRequiredService<AuditableEntityInterceptor>(),
              sp.GetRequiredService<SoftDeleteInterceptor>()));
 
+
+
+      
         services.AddScoped(typeof(IGenericRepository<>),
             typeof(GenericRepository<>));
 
-      
-
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IJobRepository, JobRepository>();
+        services.AddScoped<IApplicationRepository, ApplicationRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped<ICandidateRepository, CandidateRepository>();
 
 
 

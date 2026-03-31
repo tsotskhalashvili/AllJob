@@ -41,7 +41,7 @@ public class AppDbContext : DbContext
     public DbSet<JobSkill> JobSkills => Set<JobSkill>();
 
     // Applications
-    public DbSet<JobApplication> JoApplications => Set<JobApplication>(); 
+    public DbSet<JobApplication> JobApplications => Set<JobApplication>();
     public DbSet<SavedJob> SavedJobs => Set<SavedJob>();
 
     // Notifications

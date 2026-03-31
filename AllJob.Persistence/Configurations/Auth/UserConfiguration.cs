@@ -1,6 +1,5 @@
 ﻿using AllJob.Domain.Entities.Auth;
 using AllJob.Persistence.Common;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AllJob.Persistence.Configurations.Auth;

@@ -10,6 +10,7 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
         RuleFor(x => x.Email)
             .NotEmpty()
             .EmailAddress()
+            .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
             .MaximumLength(256);
 
         RuleFor(x => x.Password)

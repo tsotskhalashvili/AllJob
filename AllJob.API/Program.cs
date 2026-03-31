@@ -1,4 +1,5 @@
 using AllJob.API.Extensions;
+using AllJob.Application.Extensions;
 using AllJob.Persistence.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddPersistenceServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 builder.Services.AddApiService();
 
 builder.Services.AddControllers();

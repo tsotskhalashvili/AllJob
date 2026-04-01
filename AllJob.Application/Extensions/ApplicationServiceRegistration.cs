@@ -12,7 +12,8 @@ public static class ApplicationServiceRegistration
         this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(
-            Assembly.GetExecutingAssembly()); 
+            Assembly.GetExecutingAssembly());
+    
 
         services.AddScoped<IAuthService, AuthService>();
 

@@ -1,6 +1,7 @@
 using AllJob.API.Extensions;
 using AllJob.Application.Extensions;
 using AllJob.Persistence.Extensions;
+using AllJob.Persistence.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+await DataSeeder.SeedAsync(app.Services);
 
 app.UseExceptionMiddleware();
 // Configure the HTTP request pipeline.

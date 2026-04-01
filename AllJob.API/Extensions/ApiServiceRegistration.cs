@@ -11,13 +11,19 @@ public static class ApiServiceRegistration
         this IServiceCollection services,
          IConfiguration configuration)
     {
-        services.AddScoped<IExceptionResponseService, ExceptionResponseService>();
+        services.AddSingleton<IExceptionResponseService, ExceptionResponseService>();
 
         services.AddScoped<IFileUploadService,
             CloudinaryService>();
 
+        services.Configure<JwtSettings>(
+    configuration.GetSection("JwtSettings"));
+
         services.Configure<CloudinarySettings>(
     configuration.GetSection("CloudinarySettings"));
+
+        services.Configure<AdminSettings>(
+    configuration.GetSection("AdminSettings"));
 
         return services;
     }

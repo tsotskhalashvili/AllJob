@@ -3,6 +3,7 @@ using AllJob.Domain.Enums;
 namespace AllJob.Application.DTOs.Job;
 
 public record CreateJobDto(
+    Guid CompanyId,
     Guid CategoryId,
     Guid AddressId,
     string Title,

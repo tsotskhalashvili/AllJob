@@ -1,5 +1,7 @@
 ﻿using AllJob.Application.Settings;
 using AllJob.Domain.Entities.Auth;
+using AllJob.Domain.Entities.Jobs;
+using AllJob.Domain.Entities.Shared;
 using AllJob.Domain.Enums;
 using AllJob.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,15 @@ public static class DataSeeder
         await context.SaveChangesAsync();
 
         await SeedSuperAdminAsync(context, adminSettings);
+        await context.SaveChangesAsync();
+
+        await SeedAddressesAsync(context);
+        await context.SaveChangesAsync();
+
+        await SeedSkillsAsync(context);
+        await context.SaveChangesAsync();
+
+        await SeedJobCategoriesAsync(context);
         await context.SaveChangesAsync();
     }
 
@@ -67,5 +78,66 @@ public static class DataSeeder
             UserId = superAdmin.Id,
             RoleId = superAdminRole.Id
         });
+    }
+
+    private static async Task SeedAddressesAsync(AppDbContext context)
+    {
+        if (await context.Addresses.AnyAsync()) return;
+
+        var addresses = new[]
+        {
+            ("Georgia", "Tbilisi"),
+            ("Georgia", "Batumi"),
+            ("Georgia", "Kutaisi"),
+            ("Georgia", "Rustavi"),
+            ("Georgia", "Gori")
+        }.Select(a => new Address
+        {
+            Id = Guid.NewGuid(),
+            Country = a.Item1,
+            City = a.Item2
+        });
+
+        await context.Addresses.AddRangeAsync(addresses);
+    }
+
+    private static async Task SeedSkillsAsync(AppDbContext context)
+    {
+        if (await context.Skills.AnyAsync()) return;
+
+        var skills = new[]
+        {
+            "C#", "ASP.NET Core", "SQL",
+            "JavaScript", "React", "Python",
+            "Docker", "Azure", "Git", "Java"
+        }.Select(s => new Skill
+        {
+            Id = Guid.NewGuid(),
+            Name = s
+        });
+
+        await context.Skills.AddRangeAsync(skills);
+    }
+
+    private static async Task SeedJobCategoriesAsync(AppDbContext context)
+    {
+        if (await context.JobCategories.AnyAsync()) return;
+
+        var categories = new[]
+        {
+            ("Information Technology", "information-technology"),
+            ("Finance", "finance"),
+            ("Marketing", "marketing"),
+            ("Design", "design"),
+            ("Services", "services")
+        }.Select(c => new JobCategory
+        {
+            Id = Guid.NewGuid(),
+            Name = c.Item1,
+            Slug = c.Item2,
+            IconUrl = string.Empty
+        });
+
+        await context.JobCategories.AddRangeAsync(categories);
     }
 }

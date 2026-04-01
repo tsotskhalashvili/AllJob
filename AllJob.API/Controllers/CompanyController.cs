@@ -1,0 +1,60 @@
+﻿using AllJob.Application.DTOs.Company;
+using AllJob.Application.Interfaces.Services;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace AllJob.API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+
+public class CompanyController(
+ICompanyService companyService,
+IValidator<CreateCompanyDto> createValidator,
+IValidator<UpdateCompanyDto> updateValidator)
+: BaseController
+{
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCompanyById(Guid id)
+    {
+        var result = await companyService.GetCompanyByIdAsync(id);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Employer")]
+    [HttpPost]
+    public async Task<IActionResult> CreateCompany(
+        [FromBody] CreateCompanyDto dto)
+    {
+        await ValidateAsync(createValidator, dto);
+        var userId = Guid.Parse(User.FindFirst(
+            ClaimTypes.NameIdentifier)!.Value);
+        var result = await companyService
+            .CreateCompanyAsync(dto, userId);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Employer")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateCompany(
+        Guid id, [FromBody] UpdateCompanyDto dto)
+    {
+        await ValidateAsync(updateValidator, dto);
+        var userId = Guid.Parse(User.FindFirst(
+            ClaimTypes.NameIdentifier)!.Value);
+        await companyService.UpdateCompanyAsync(id, dto, userId);
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Employer")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCompany(Guid id)
+    {
+        var userId = Guid.Parse(User.FindFirst(
+            ClaimTypes.NameIdentifier)!.Value);
+        await companyService.DeleteCompanyAsync(id, userId);
+        return NoContent();
+    }
+}

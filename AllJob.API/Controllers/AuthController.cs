@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AllJob.API.Controllers;
 
+[Route("api/[controller]")]
+[ApiController]
 public class AuthController(
     IAuthService authService,
     IValidator<RegisterDto> registerValidator,

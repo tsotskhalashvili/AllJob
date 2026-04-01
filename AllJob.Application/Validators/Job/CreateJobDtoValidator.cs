@@ -39,8 +39,6 @@ public class CreateJobDtoValidator : AbstractValidator<CreateJobDto>
             .GreaterThan(DateTime.Now)
             .WithMessage("ExpiresAt must be in the future");
 
-        RuleFor(x => x.SkillIds)
-            .NotEmpty()
-            .WithMessage("At least one skill is required");
+       
     }
 }

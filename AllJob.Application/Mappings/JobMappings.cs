@@ -29,6 +29,7 @@ public static class JobMappings
     public static Job ToEntity(this CreateJobDto dto, Guid companyId)
       => new()
       {
+
           CompanyId = companyId,
           CategoryId = dto.CategoryId,
           AddressId = dto.AddressId,

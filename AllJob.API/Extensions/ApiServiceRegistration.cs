@@ -10,7 +10,7 @@ using System.Text;
 namespace AllJob.API.Extensions;
 
 public static class ApiServiceRegistration
-{
+{       
     public static IServiceCollection AddApiService(
         this IServiceCollection services,
          IConfiguration configuration)

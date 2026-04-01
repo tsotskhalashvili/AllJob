@@ -11,5 +11,17 @@ namespace AllJob.Persistence.Repositories
         public async Task<User?> GetByEmailAsync(string email)
          => await _dbSet
              .FirstOrDefaultAsync(u => u.Email == email);
+
+        public async Task<User?> GetByEmailWithRolesAsync(string email)
+         => await _dbSet
+            .Include(u => u.UserRoles)
+              .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        public async Task<User?> GetByIdWithRolesAsync(Guid id)
+    => await _dbSet
+        .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+        .FirstOrDefaultAsync(u => u.Id == id);
     }
 }

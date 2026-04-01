@@ -5,7 +5,6 @@ using AllJob.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AllJob.Persistence.Seed;
 

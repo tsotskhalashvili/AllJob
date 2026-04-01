@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using AllJob.Application.Interfaces.Services;
+using AllJob.Application.Services;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -10,7 +12,9 @@ public static class ApplicationServiceRegistration
         this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(
-            Assembly.GetExecutingAssembly());
+            Assembly.GetExecutingAssembly()); 
+
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

@@ -36,11 +36,13 @@ public static class PersistenceServiceRegistration
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IJobRepository, JobRepository>();
         services.AddScoped<IApplicationRepository, ApplicationRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<ICandidateRepository, CandidateRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 
 

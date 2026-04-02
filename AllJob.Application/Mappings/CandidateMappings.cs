@@ -58,13 +58,24 @@ public static class CandidateMappings
         };
 
     public static void UpdateEntity(
-        this CandidateProfile candidate, UpdateCandidateProfileDto dto)
+    this CandidateProfile candidate, UpdateCandidateProfileDto dto)
     {
-        candidate.FirstName = dto.FirstName;
-        candidate.LastName = dto.LastName;
-        candidate.Bio = dto.Bio;
-        candidate.LinkedInUrl = dto.LinkedInUrl;
-        candidate.PhotoUrl = dto.PhotoUrl;
-        candidate.AddressId = dto.AddressId;
+        if (dto.FirstName is not null)
+            candidate.FirstName = dto.FirstName;
+
+        if (dto.LastName is not null)
+            candidate.LastName = dto.LastName;
+
+        if (dto.Bio is not null)
+            candidate.Bio = dto.Bio;
+
+        if (dto.LinkedInUrl is not null)
+            candidate.LinkedInUrl = dto.LinkedInUrl;
+
+        if (dto.PhotoUrl is not null)
+            candidate.PhotoUrl = dto.PhotoUrl;
+
+        if (dto.AddressId is not null)
+            candidate.AddressId = dto.AddressId.Value;
     }
 }

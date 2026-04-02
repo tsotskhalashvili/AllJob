@@ -13,11 +13,17 @@ public static class ApplicationServiceRegistration
     {
         services.AddValidatorsFromAssembly(
             Assembly.GetExecutingAssembly());
-    
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<ICompanyService, CompanyService>();
+        services.AddScoped<ICandidateService, CandidateService>();
+        services.AddScoped<ISkillService, SkillService>();
+        services.AddScoped<IJobCategoryService, JobCategoryService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IApplicationService, ApplicationService>();
+        services.AddScoped<ISavedJobService, SavedJobService>();
+        services.AddScoped<IPlanService, PlanService>();
 
         return services;
     }

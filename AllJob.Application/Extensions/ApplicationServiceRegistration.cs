@@ -24,6 +24,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<ISavedJobService, SavedJobService>();
         services.AddScoped<IPlanService, PlanService>();
+        services.AddScoped<IAdminService, AdminService>();
 
         return services;
     }

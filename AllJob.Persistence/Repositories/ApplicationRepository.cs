@@ -18,11 +18,13 @@ public class ApplicationRepository(AppDbContext context)
         .ToListAsync();
 
     public async Task<IReadOnlyList<JobApplication>> GetJobApplicationsAsync(
-        Guid jobId)
-        => await _dbSet
-            .AsNoTracking()
-            .Include(a => a.User)
-            .Where(a => a.JobId == jobId)
-            .OrderByDescending(a => a.AppliedAt)
-            .ToListAsync();
+     Guid jobId)
+     => await _dbSet
+         .AsNoTracking()
+         .Include(a => a.Job)
+             .ThenInclude(j => j.Company)
+         .Include(a => a.User)
+         .Where(a => a.JobId == jobId)
+         .OrderByDescending(a => a.AppliedAt)
+         .ToListAsync();
 }

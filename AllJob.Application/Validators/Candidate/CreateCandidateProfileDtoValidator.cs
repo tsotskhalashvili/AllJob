@@ -34,8 +34,6 @@ public class CreateCandidateProfileDtoValidator
         RuleFor(x => x.AddressId)
             .NotEmpty();
 
-        RuleFor(x => x.SkillIds)
-            .NotEmpty()
-            .WithMessage("At least one skill is required");
+          
     }
 }

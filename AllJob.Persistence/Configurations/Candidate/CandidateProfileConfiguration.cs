@@ -24,17 +24,17 @@ public class CandidateProfileConfiguration : BaseEntityConfiguration<CandidatePr
         builder.HasMany(x => x.Experiences)
             .WithOne(x => x.CandidateProfile)
             .HasForeignKey(x => x.CandidateProfileId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Educations)
             .WithOne(x => x.CandidateProfile)
             .HasForeignKey(x => x.CandidateProfileId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Skills)
             .WithOne(x => x.CandidateProfile)
             .HasForeignKey(x => x.CandidateProfileId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(x => x.FirstName)
             .IsRequired()

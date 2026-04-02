@@ -13,7 +13,7 @@ public class CandidateSkillConfiguration : IEntityTypeConfiguration<CandidateSki
         builder.HasOne(x => x.CandidateProfile)
             .WithMany(x => x.Skills)
             .HasForeignKey(x => x.CandidateProfileId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade); 
 
         builder.HasOne(x => x.Skill)
             .WithMany(x => x.CandidateSkills)

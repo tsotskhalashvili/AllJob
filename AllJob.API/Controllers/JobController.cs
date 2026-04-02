@@ -2,7 +2,6 @@
 using AllJob.Application.Interfaces.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -37,8 +36,11 @@ public class JobController(
     public async Task<IActionResult> CreateJob([FromBody] CreateJobDto dto)
     {
         await ValidateAsync(createValidator, dto);
-       
-        var result = await jobService.CreateJobAsync(dto);
+
+        var userId = Guid.Parse(User.FindFirst(
+            ClaimTypes.NameIdentifier)!.Value);
+
+        var result = await jobService.CreateJobAsync(dto, userId);
         return Ok(result);
     }
 

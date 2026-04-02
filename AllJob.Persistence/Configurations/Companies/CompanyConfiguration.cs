@@ -21,11 +21,6 @@ public class CompanyConfiguration : BaseEntityConfiguration<Company>
             .HasForeignKey(x => x.CompanyId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(x => x.Reviews)
-            .WithOne(x => x.Company)
-            .HasForeignKey(x => x.CompanyId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(x => x.Payments)
             .WithOne(x => x.Company)
             .HasForeignKey(x => x.CompanyId)

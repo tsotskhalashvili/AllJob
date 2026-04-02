@@ -2,7 +2,7 @@ using AllJob.Domain.Enums;
 
 namespace AllJob.Application.DTOs.Job;
 
-// class გამოვიყენეთ → nullable properties სჭირდება
+
 public class JobFilterDto
 {
     public string? Title { get; set; }

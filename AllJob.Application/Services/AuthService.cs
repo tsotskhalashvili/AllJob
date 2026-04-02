@@ -95,7 +95,7 @@ namespace AllJob.Application.Services
                 .GetByTokenAsync(dto.RefreshToken)
                 ?? throw new UnauthorizedException("Invalid refresh token");
 
-            if (refreshToken.ExpiresAt < DateTime.Now)
+            if (refreshToken.ExpiresAt < DateTime.UtcNow)
                 throw new UnauthorizedException("Refresh token expired");
 
             if (refreshToken.RevokedAt is not null)
@@ -110,7 +110,7 @@ namespace AllJob.Application.Services
                 ?? throw new UnauthorizedException("User has no assigned role");
 
           
-            refreshToken.RevokedAt = DateTime.Now;
+            refreshToken.RevokedAt = DateTime.UtcNow;
             refreshTokenRepository.Update(refreshToken);
 
             
@@ -126,7 +126,7 @@ namespace AllJob.Application.Services
             if (refreshToken.RevokedAt is not null)
                 throw new ConflictException("Token is already revoked");
 
-            refreshToken.RevokedAt = DateTime.Now;
+            refreshToken.RevokedAt = DateTime.UtcNow;
             refreshTokenRepository.Update(refreshToken);
             await unitOfWork.SaveChangesAsync();
         }
@@ -154,7 +154,7 @@ namespace AllJob.Application.Services
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims : claims,
-                expires: DateTime.Now.AddMinutes(
+                expires: DateTime.UtcNow.AddMinutes(
                     _jwt.AccessTokenExpirationMinutes),
                 signingCredentials: credentials
                 );
@@ -184,7 +184,7 @@ namespace AllJob.Application.Services
                 Id  = Guid.NewGuid(),
                 UserId = user.Id,
                 Token = refreshToken,
-                ExpiresAt = DateTime.Now.AddDays(
+                ExpiresAt = DateTime.UtcNow.AddDays(
                     _jwt.RefreshTokenExpirationDays)
 
 
@@ -195,7 +195,7 @@ namespace AllJob.Application.Services
             return new AuthResponseDto(
                 AccessToken: accessToken,
                 RefreshToken: refreshToken,
-                ExpiresAt:DateTime.Now.AddMinutes(
+                ExpiresAt:DateTime.UtcNow.AddMinutes(
                     _jwt.AccessTokenExpirationMinutes)
                 );
 

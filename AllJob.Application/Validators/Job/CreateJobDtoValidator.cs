@@ -36,7 +36,7 @@ public class CreateJobDtoValidator : AbstractValidator<CreateJobDto>
             .WithMessage("SalaryMax must be greater than SalaryMin");
 
         RuleFor(x => x.ExpiresAt)
-            .GreaterThan(DateTime.Now)
+            .Must(d => d > DateTime.UtcNow)
             .WithMessage("ExpiresAt must be in the future");
 
        

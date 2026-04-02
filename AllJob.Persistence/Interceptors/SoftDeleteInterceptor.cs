@@ -14,7 +14,7 @@ public sealed class SoftDeleteInterceptor : SaveChangesInterceptor
         if (eventData.Context is null)
             return base.SavingChangesAsync(eventData, result, cancellationToken);
 
-        var now = DateTime.Now;
+        var now = DateTime.UtcNow;
 
         foreach (var entry in eventData.Context.ChangeTracker
             .Entries<ISoftDeletable>()

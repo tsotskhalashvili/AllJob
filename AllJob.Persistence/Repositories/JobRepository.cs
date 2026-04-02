@@ -76,7 +76,7 @@ public class JobRepository(AppDbContext context)
     public async Task<IReadOnlyList<Job>> GetExpiredJobsAsync()
         => await _dbSet
         .AsNoTracking()
-            .Where(j => j.ExpiresAt < DateTime.Now
+            .Where(j => j.ExpiresAt < DateTime.UtcNow
                 && j.Status != Domain.Enums.JobStatus.Expired)
             .ToListAsync();
 }

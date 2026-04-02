@@ -7,7 +7,7 @@ public interface IJobService
 {
     Task<PagedResponseDto<JobResponseDto>> GetJobsAsync(JobFilterDto filter);
     Task<JobResponseDto> GetJobByIdAsync(Guid id);
-    Task<JobResponseDto> CreateJobAsync(CreateJobDto dto);
-    Task UpdateJobAsync(Guid id, UpdateJobDto dto, Guid companyId);
-    Task DeleteJobAsync(Guid id, Guid companyId);
+    Task<JobResponseDto> CreateJobAsync(CreateJobDto dto, Guid userId);
+    Task UpdateJobAsync(Guid id, UpdateJobDto dto, Guid userId);
+    Task DeleteJobAsync(Guid id, Guid userId);
 }

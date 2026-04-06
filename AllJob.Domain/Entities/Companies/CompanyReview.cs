@@ -11,6 +11,7 @@ public class CompanyReview : BaseEntity
     public string Title { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
     public bool IsAnonymous { get; set; }
+    public bool IsApproved { get; set; }
 
     public Company Company { get; set; } = null!;
     public User User { get; set; } = null!;

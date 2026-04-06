@@ -2,7 +2,7 @@
 using AllJob.Domain.Entities.Auth;
 using AllJob.Domain.Entities.Jobs;
 using AllJob.Domain.Entities.Shared;
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Auth;
 using AllJob.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

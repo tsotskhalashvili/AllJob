@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Job;
 using AllJob.Domain.Entities.Jobs;
+using AllJob.Domain.Enums.Jobs;
 
 namespace AllJob.Application.Mappings;
 
@@ -38,7 +39,7 @@ public static class JobMappings
           SalaryMin = dto.SalaryMin,
           SalaryMax = dto.SalaryMax,
           WorkType = dto.WorkType,
-          Status = Domain.Enums.JobStatus.Draft,
+          Status = JobStatus.Draft,
           ExpiresAt = dto.ExpiresAt
       };
 

@@ -1,4 +1,4 @@
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Notifications;
 
 namespace AllJob.Application.DTOs.Notification;
 

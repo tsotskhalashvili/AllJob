@@ -1,6 +1,6 @@
 ﻿using AllJob.Domain.Common;
 using AllJob.Domain.Entities.Companies;
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Subscriptions;
 
 namespace AllJob.Domain.Entities.Subscriptions;
 

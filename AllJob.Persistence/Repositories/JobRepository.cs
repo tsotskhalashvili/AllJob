@@ -3,6 +3,7 @@ using AllJob.Application.DTOs.Job;
 using AllJob.Application.Interfaces.Repositories;
 using AllJob.Application.Mappings;
 using AllJob.Domain.Entities.Jobs;
+using AllJob.Domain.Enums.Jobs;
 using AllJob.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,6 @@ public class JobRepository(AppDbContext context)
         => await _dbSet
         .AsNoTracking()
             .Where(j => j.ExpiresAt < DateTime.UtcNow
-                && j.Status != Domain.Enums.JobStatus.Expired)
+                && j.Status != JobStatus.Expired)
             .ToListAsync();
 }

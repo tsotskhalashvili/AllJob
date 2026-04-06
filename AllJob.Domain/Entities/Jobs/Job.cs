@@ -2,7 +2,7 @@
 using AllJob.Domain.Entities.Applications;
 using AllJob.Domain.Entities.Companies;
 using AllJob.Domain.Entities.Shared;
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Jobs;
 
 namespace AllJob.Domain.Entities.Jobs;
 

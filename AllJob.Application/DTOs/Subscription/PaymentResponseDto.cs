@@ -1,4 +1,4 @@
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Subscriptions;
 
 namespace AllJob.Application.DTOs.Subscription;
 

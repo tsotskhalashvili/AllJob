@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.Interfaces.Repositories;
 using AllJob.Domain.Entities.Companies;
+using AllJob.Domain.Enums.Jobs;
 using AllJob.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,5 +21,5 @@ public class CompanyRepository(AppDbContext context)
             .AsNoTracking()
             .Where(c => c.Id == companyId)
             .SelectMany(c => c.Jobs)
-            .CountAsync(j => j.Status == Domain.Enums.JobStatus.Active);
+            .CountAsync(j => j.Status == JobStatus.Active);
 }

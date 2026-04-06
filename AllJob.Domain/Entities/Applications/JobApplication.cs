@@ -1,7 +1,7 @@
 ﻿using AllJob.Domain.Common;
 using AllJob.Domain.Entities.Auth;
 using AllJob.Domain.Entities.Jobs;
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Applications;
 
 namespace AllJob.Domain.Entities.Applications;
 

@@ -15,8 +15,10 @@ public class CandidateProfile : BaseEntity
 
     public string LinkedInUrl { get; set; } = string.Empty;
     public string PhotoUrl { get; set; } = string.Empty;
+    public bool IsOpenToWork { get; set; }
 
-    // Navigation Properties
+
+   // Navigation Properties
     public User User { get; set; } = null!;
     public Address Address { get; set; } = null!;
     public ICollection<CandidateExperience> Experiences { get; set; } = new List<CandidateExperience>();

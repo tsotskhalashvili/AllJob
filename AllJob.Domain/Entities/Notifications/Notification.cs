@@ -1,6 +1,6 @@
 ﻿using AllJob.Domain.Common;
 using AllJob.Domain.Entities.Auth;
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Notifications;
 
 namespace AllJob.Domain.Entities.Notifications;
 

@@ -1,4 +1,4 @@
-using AllJob.Domain.Enums;
+using AllJob.Domain.Enums.Jobs;
 
 namespace AllJob.Application.DTOs.Job;
 

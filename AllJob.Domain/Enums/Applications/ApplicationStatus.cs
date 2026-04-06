@@ -1,4 +1,4 @@
-﻿namespace AllJob.Domain.Enums;
+﻿namespace AllJob.Domain.Enums.Applications;
 
 public enum ApplicationStatus
 {

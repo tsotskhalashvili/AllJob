@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Application;
 using AllJob.Domain.Entities.Applications;
+using AllJob.Domain.Enums.Applications;
 
 namespace AllJob.Application.Mappings;
 
@@ -26,6 +27,6 @@ public static class ApplicationMappings
             CvUrl = dto.CvUrl,
             CoverLetter = dto.CoverLetter,
             AppliedAt = DateTime.UtcNow,
-            Status = Domain.Enums.ApplicationStatus.Pending
+            Status = ApplicationStatus.Pending
         };
 }

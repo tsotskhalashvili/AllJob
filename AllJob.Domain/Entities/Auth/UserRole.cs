@@ -1,11 +1,15 @@
-﻿namespace AllJob.Domain.Entities.Auth;
+﻿    using AllJob.Domain.Enums.Auth;
 
-public class UserRole 
-{
-    public Guid UserId { get; set; }
-    public Guid RoleId { get; set; }
+    namespace AllJob.Domain.Entities.Auth;
 
-    // Navigation Properties
-    public User User { get; set; } = null!;
-    public Role Role { get; set; } = null!;
-}
+    public class UserRole 
+    {
+        public Guid UserId { get; set; }
+        public Guid RoleId { get; set; }
+       
+
+
+        // Navigation Properties
+        public User User { get; set; } = null!;
+        public Role Role { get; set; } = null!;
+    }

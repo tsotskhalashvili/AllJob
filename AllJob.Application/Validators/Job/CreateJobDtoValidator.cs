@@ -1,4 +1,5 @@
 ﻿using AllJob.Application.DTOs.Job;
+using AllJob.Domain.Enums.Jobs;
 using FluentValidation;
 
 namespace AllJob.Application.Validators.Job;
@@ -11,7 +12,8 @@ public class CreateJobDtoValidator : AbstractValidator<CreateJobDto>
             .NotEmpty();
 
         RuleFor(x => x.AddressId)
-            .NotEmpty();
+            .NotEmpty()
+            .When(x => x.WorkType != WorkType.Remote);
 
         RuleFor(x => x.Title)
             .NotEmpty()

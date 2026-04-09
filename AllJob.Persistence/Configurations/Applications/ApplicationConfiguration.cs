@@ -25,7 +25,7 @@ public class ApplicationConfiguration : BaseEntityConfiguration<JobApplication>
             .HasMaxLength(3000);
 
         builder.Property(x => x.CvUrl)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(512);
 
         builder.Property(x => x.Status)

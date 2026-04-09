@@ -6,6 +6,7 @@ using AllJob.Application.Interfaces.Repositories;
 using AllJob.Application.Interfaces.Services;
 using AllJob.Application.Mappings;
 using AllJob.Domain.Entities.Jobs;
+using AllJob.Domain.Enums.Subscriptions;
 
 namespace AllJob.Application.Services;
 
@@ -18,11 +19,28 @@ public class JobService(
     public async Task<JobResponseDto> CreateJobAsync(CreateJobDto dto, Guid userId)
     {
         var company = await companyRepository
-       .GetByIdAsync(dto.CompanyId)
-       ?? throw new NotFoundException("Company", dto.CompanyId);
+            .GetByIdAsync(dto.CompanyId)
+            ?? throw new NotFoundException("Company", dto.CompanyId);
 
         if (company.UserId != userId)
             throw new ForbiddenException();
+
+        // Plan limit შემოწმება:
+        var activeJobs = await companyRepository
+            .GetActiveJobsCountAsync(company.Id);
+
+        var maxJobs = company.Tier switch
+        {
+            PlanTier.Free => 5,
+            PlanTier.Standard => 15,
+            PlanTier.VIP => 30,
+            PlanTier.SuperVIP => int.MaxValue,
+            _ => 5
+        };
+
+        if (activeJobs >= maxJobs)
+            throw new ForbiddenException(
+                $"You have reached your job limit ({maxJobs}). Please upgrade your plan.");
 
         var job = dto.ToEntity(dto.CompanyId);
 
@@ -67,11 +85,11 @@ public class JobService(
     }
 
     public async Task<PagedResponseDto<JobResponseDto>> GetJobsAsync(JobFilterDto filter)
-    => await jobRepository.GetPagedJobsAsync(filter);
+        => await jobRepository.GetPagedJobsAsync(filter);
 
     public async Task UpdateJobAsync(Guid id, UpdateJobDto dto, Guid userId)
     {
-        var job = await jobRepository.GetByIdAsync(id)
+        var job = await jobRepository.GetJobWithDetailsAsync(id)
             ?? throw new NotFoundException("Job", id);
 
         var company = await companyRepository.GetByIdAsync(job.CompanyId)
@@ -82,13 +100,16 @@ public class JobService(
 
         job.UpdateEntity(dto);
 
-        job.JobSkills.Clear();
-        job.JobSkills = dto.SkillIds
-            .Select(skillId => new JobSkill
-            {
-                JobId = job.Id,
-                SkillId = skillId
-            }).ToList();
+        if (dto.SkillIds is not null)
+        {
+            job.JobSkills.Clear();
+            job.JobSkills = dto.SkillIds
+                .Select(skillId => new JobSkill
+                {
+                    JobId = job.Id,
+                    SkillId = skillId
+                }).ToList();
+        }
 
         jobRepository.Update(job);
         await unitOfWork.SaveChangesAsync();

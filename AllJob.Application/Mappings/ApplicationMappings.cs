@@ -26,7 +26,6 @@ public static class ApplicationMappings
             UserId = userId,
             CvUrl = dto.CvUrl,
             CoverLetter = dto.CoverLetter,
-            CreatedAt = DateTime.UtcNow,
             Status = ApplicationStatus.Pending
         };
 }

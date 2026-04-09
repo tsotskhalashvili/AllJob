@@ -6,15 +6,14 @@ using AllJob.Application.Interfaces.Repositories;
 using AllJob.Application.Interfaces.Services;
 using AllJob.Application.Mappings;
 using AllJob.Domain.Entities.Jobs;
-using AllJob.Domain.Enums.Subscriptions;
 
 namespace AllJob.Application.Services;
 
 public class JobService(
     IJobRepository jobRepository,
     ICompanyRepository companyRepository,
-    IUnitOfWork unitOfWork
-    ) : IJobService
+    IPlanRepository planRepository,
+    IUnitOfWork unitOfWork) : IJobService
 {
     public async Task<JobResponseDto> CreateJobAsync(CreateJobDto dto, Guid userId)
     {
@@ -25,22 +24,16 @@ public class JobService(
         if (company.UserId != userId)
             throw new ForbiddenException();
 
-        // Plan limit შემოწმება:
         var activeJobs = await companyRepository
             .GetActiveJobsCountAsync(company.Id);
 
-        var maxJobs = company.Tier switch
-        {
-            PlanTier.Free => 5,
-            PlanTier.Standard => 15,
-            PlanTier.VIP => 30,
-            PlanTier.SuperVIP => int.MaxValue,
-            _ => 5
-        };
+        var plan = await planRepository
+            .GetByTierAsync(company.Tier)
+            ?? throw new NotFoundException("Plan", company.Tier.ToString());
 
-        if (activeJobs >= maxJobs)
+        if (activeJobs >= plan.MaxJobListings)
             throw new ForbiddenException(
-                $"You have reached your job limit ({maxJobs}). Please upgrade your plan.");
+                $"Job limit reached ({plan.MaxJobListings}). Please upgrade your plan.");
 
         var job = dto.ToEntity(dto.CompanyId);
 

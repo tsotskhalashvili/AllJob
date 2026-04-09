@@ -43,5 +43,11 @@ public class CompanyConfiguration : BaseEntityConfiguration<Company>
 
         builder.Property(x => x.Industry)
             .HasMaxLength(100);
+
+        builder.Property(x => x.FacebookUrl)
+            .HasMaxLength(256);
+
+        builder.Property(x => x.Description)
+            .HasMaxLength(2000);
     }
 }

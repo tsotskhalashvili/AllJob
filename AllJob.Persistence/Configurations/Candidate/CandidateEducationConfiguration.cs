@@ -16,13 +16,12 @@ public class CandidateEducationConfiguration : BaseEntityConfiguration<Candidate
             .HasForeignKey(x => x.CandidateProfileId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(x => x.University)
+        builder.Property(x => x.InstitutionName)
             .IsRequired()
             .HasMaxLength(256);
 
         builder.Property(x => x.Degree)
-            .IsRequired()
-            .HasMaxLength(100);
+            .IsRequired();
 
         builder.Property(x => x.FieldOfStudy)
             .IsRequired()

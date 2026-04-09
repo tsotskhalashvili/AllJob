@@ -1,5 +1,6 @@
 ﻿using AllJob.Domain.Entities.Auth;
 using AllJob.Persistence.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AllJob.Persistence.Configurations.Auth;
@@ -19,5 +20,8 @@ public class UserConfiguration : BaseEntityConfiguration<User>
 
         builder.Property(x => x.PasswordHash)
             .IsRequired();
+
+        builder.Property(x => x.IsExternalLogin)
+             .HasDefaultValue(false);
     }
 }

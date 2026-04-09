@@ -1,6 +1,6 @@
-using AllJob.Domain.Common;
 using AllJob.Domain.Entities.Applications;
 using AllJob.Domain.Entities.Auth;
+using AllJob.Domain.Entities.Blog;
 using AllJob.Domain.Entities.Candidate;
 using AllJob.Domain.Entities.Companies;
 using AllJob.Domain.Entities.Jobs;
@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<AdminInvite> AdminInvites => Set<AdminInvite>();
 
     // Candidate
     public DbSet<CandidateProfile> CandidateProfiles => Set<CandidateProfile>();
@@ -51,6 +52,10 @@ public class AppDbContext : DbContext
     public DbSet<Plan> Plans => Set<Plan>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<CompanySubscription> CompanySubscriptions => Set<CompanySubscription>();
+
+    // Blog
+    public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
+    public DbSet<BlogCategory> BlogCategories => Set<BlogCategory>();
 
     // Shared
     public DbSet<Address> Addresses => Set<Address>();

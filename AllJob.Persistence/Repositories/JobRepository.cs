@@ -31,10 +31,10 @@ public class JobRepository(AppDbContext context)
             query = query.Where(j => j.CategoryId == filter.CategoryId);
 
         if (!string.IsNullOrEmpty(filter.Country))
-            query = query.Where(j => j.Address.Country == filter.Country);
+            query = query.Where(j => j.Address!.Country == filter.Country);
 
         if (!string.IsNullOrEmpty(filter.City))
-            query = query.Where(j => j.Address.City == filter.City);
+            query = query.Where(j => j.Address!.City == filter.City);
 
         if (filter.WorkType.HasValue)
             query = query.Where(j => j.WorkType == filter.WorkType);

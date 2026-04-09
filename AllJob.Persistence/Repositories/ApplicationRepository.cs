@@ -14,7 +14,7 @@ public class ApplicationRepository(AppDbContext context)
         .Include(a => a.Job)
         .ThenInclude(j => j.Company)
         .Where(a => a.UserId == userId)
-        .OrderByDescending(a => a.AppliedAt)
+        
         .ToListAsync();
 
     public async Task<IReadOnlyList<JobApplication>> GetJobApplicationsAsync(
@@ -25,6 +25,6 @@ public class ApplicationRepository(AppDbContext context)
              .ThenInclude(j => j.Company)
          .Include(a => a.User)
          .Where(a => a.JobId == jobId)
-         .OrderByDescending(a => a.AppliedAt)
+         
          .ToListAsync();
 }

@@ -16,10 +16,11 @@ public static class JobMappings
             Description: job.Description,
             SalaryMin: job.SalaryMin,
             SalaryMax: job.SalaryMax,
-            Country: job.Address.Country,
-            City: job.Address.City,
+            Country: job.Address?.Country,
+            City: job.Address?.City,
             WorkType: job.WorkType,
             Status: job.Status,
+            ExperienceLevel: job.ExperienceLevel,
             ExpiresAt: job.ExpiresAt,
             CreatedAt: job.CreatedAt,
             Skills: job.JobSkills
@@ -28,29 +29,29 @@ public static class JobMappings
         );
 
     public static Job ToEntity(this CreateJobDto dto, Guid companyId)
-      => new()
-      {
-
-          CompanyId = companyId,
-          CategoryId = dto.CategoryId,
-          AddressId = dto.AddressId,
-          Title = dto.Title,
-          Description = dto.Description,
-          SalaryMin = dto.SalaryMin,
-          SalaryMax = dto.SalaryMax,
-          WorkType = dto.WorkType,
-          Status = JobStatus.Draft,
-          ExpiresAt = dto.ExpiresAt
-      };
+        => new()
+        {
+            CompanyId = companyId,
+            CategoryId = dto.CategoryId,
+            AddressId = dto.AddressId,
+            Title = dto.Title,
+            Description = dto.Description,
+            SalaryMin = dto.SalaryMin,
+            SalaryMax = dto.SalaryMax,
+            WorkType = dto.WorkType,
+            ExperienceLevel = dto.ExperienceLevel,
+            Status = JobStatus.Draft,
+            ExpiresAt = dto.ExpiresAt
+        };
 
     public static void UpdateEntity(this Job job, UpdateJobDto dto)
     {
-        job.Title = dto.Title;
-        job.Description = dto.Description;
-        job.SalaryMin = dto.SalaryMin;
-        job.SalaryMax = dto.SalaryMax;
-        job.WorkType = dto.WorkType;
-        job.ExpiresAt = dto.ExpiresAt;
+        if (dto.Title is not null) job.Title = dto.Title;
+        if (dto.Description is not null) job.Description = dto.Description;
+        if (dto.SalaryMin is not null) job.SalaryMin = dto.SalaryMin;
+        if (dto.SalaryMax is not null) job.SalaryMax = dto.SalaryMax;
+        if (dto.WorkType is not null) job.WorkType = dto.WorkType.Value;
+        if (dto.ExperienceLevel is not null) job.ExperienceLevel = dto.ExperienceLevel;
+        if (dto.ExpiresAt is not null) job.ExpiresAt = dto.ExpiresAt.Value;
     }
-
 }

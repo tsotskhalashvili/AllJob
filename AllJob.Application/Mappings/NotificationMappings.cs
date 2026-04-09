@@ -11,6 +11,7 @@ public static class NotificationMappings
             Title: notification.Title,
             Message: notification.Message,
             Type: notification.Type,
+            ActionUrl: notification.ActionUrl,
             IsRead: notification.IsRead,
             CreatedAt: notification.CreatedAt
         );

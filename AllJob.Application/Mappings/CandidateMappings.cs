@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Candidate;
 using AllJob.Domain.Entities.Candidate;
+using System.Diagnostics.Metrics;
 
 namespace AllJob.Application.Mappings;
 
@@ -11,10 +12,10 @@ public static class CandidateMappings
             FirstName: candidate.FirstName,
             LastName: candidate.LastName,
             Bio: candidate.Bio,
-            LinkedInUrl: candidate.LinkedInUrl,
-            PhotoUrl: candidate.PhotoUrl,
-            Country: candidate.Address.Country,
-            City: candidate.Address.City,
+            LinkedInUrl: candidate.LinkedInUrl ?? string.Empty,
+            PhotoUrl: candidate.PhotoUrl ?? string.Empty,
+            Country:  candidate.Address?.Country ?? string.Empty,
+            City: candidate.Address?.City ?? string.Empty,
             Skills: candidate.Skills
                 .Select(cs => cs.Skill.Name)
                 .ToList(),
@@ -37,8 +38,8 @@ public static class CandidateMappings
 
     public static EducationDto ToDto(this CandidateEducation education)
         => new(
-            University: education.University,
-            Degree: education.Degree,
+            InstitutionName: education.InstitutionName,
+            Degree: education.Degree.ToString(),
             FieldOfStudy: education.FieldOfStudy,
             StartDate: education.StartDate,
             EndDate: education.EndDate

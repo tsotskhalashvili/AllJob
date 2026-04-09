@@ -3,18 +3,19 @@ using AllJob.Domain.Enums.Jobs;
 namespace AllJob.Application.DTOs.Job;
 
 public record JobResponseDto(
-    Guid Id,
+       Guid Id,
     string CompanyName,
-    string CompanyLogoUrl,
+    string? CompanyLogoUrl,
     string CategoryName,
     string Title,
     string Description,
     decimal? SalaryMin,
     decimal? SalaryMax,
-    string Country,
-    string City,
+    string? Country,
+    string? City,
     WorkType WorkType,
     JobStatus Status,
+    ExperienceLevel? ExperienceLevel,
     DateTime ExpiresAt,
     DateTime CreatedAt,
     List<string> Skills

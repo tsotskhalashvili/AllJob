@@ -7,8 +7,8 @@ public record ApplicationResponseDto(
     Guid JobId,
     string JobTitle,
     string CompanyName,
-    string CvUrl,
+    string? CvUrl,
     string? CoverLetter,
-    ApplicationStatus Status,
-    DateTime AppliedAt
+    ApplicationStatus Status
+ 
 );

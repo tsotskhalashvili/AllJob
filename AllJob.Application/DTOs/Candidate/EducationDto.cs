@@ -2,7 +2,7 @@ namespace AllJob.Application.DTOs.Candidate;
 
 
 public record EducationDto(
-    string University,
+    string InstitutionName,
     string Degree,
     string FieldOfStudy,
     DateTime StartDate,

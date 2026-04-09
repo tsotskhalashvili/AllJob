@@ -1,7 +1,9 @@
 ﻿using AllJob.Application.Settings;
 using AllJob.Domain.Entities.Auth;
+using AllJob.Domain.Entities.Blog;
 using AllJob.Domain.Entities.Jobs;
 using AllJob.Domain.Entities.Shared;
+using AllJob.Domain.Entities.Subscriptions;
 using AllJob.Domain.Enums.Auth;
 using AllJob.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +35,12 @@ public static class DataSeeder
         await context.SaveChangesAsync();
 
         await SeedJobCategoriesAsync(context);
+        await context.SaveChangesAsync();
+
+        await SeedPlansAsync(context);
+        await context.SaveChangesAsync();
+
+        await SeedBlogCategoriesAsync(context);
         await context.SaveChangesAsync();
     }
 
@@ -90,7 +98,12 @@ public static class DataSeeder
             ("Georgia", "Batumi"),
             ("Georgia", "Kutaisi"),
             ("Georgia", "Rustavi"),
-            ("Georgia", "Gori")
+            ("Georgia", "Gori"),
+            ("Georgia", "Zugdidi"),
+            ("Georgia", "Poti"),
+            ("Georgia", "Telavi"),
+            ("Georgia", "Akhaltsikhe"),
+            ("Georgia", "Kobuleti")
         }.Select(a => new Address
         {
             Id = Guid.NewGuid(),
@@ -107,9 +120,12 @@ public static class DataSeeder
 
         var skills = new[]
         {
-            "C#", "ASP.NET Core", "SQL",
-            "JavaScript", "React", "Python",
-            "Docker", "Azure", "Git", "Java"
+            "C#", "ASP.NET Core", "SQL", "JavaScript",
+            "React", "Python", "Docker", "Azure",
+            "Git", "Java", "Angular", "TypeScript",
+            "Node.js", "PostgreSQL", "Redis",
+            "Kubernetes", "AWS", "Linux",
+            "MongoDB", "GraphQL"
         }.Select(s => new Skill
         {
             Id = Guid.NewGuid(),
@@ -129,7 +145,23 @@ public static class DataSeeder
             ("Finance", "finance"),
             ("Marketing", "marketing"),
             ("Design", "design"),
-            ("Services", "services")
+            ("Services", "services"),
+            ("Healthcare", "healthcare"),
+            ("Education", "education"),
+            ("Legal", "legal"),
+            ("Engineering", "engineering"),
+            ("Sales", "sales"),
+            ("HR", "hr"),
+            ("Tourism", "tourism"),
+            ("Construction", "construction"),
+            ("Transport", "transport"),
+            ("Banking", "banking"),
+            ("Hospitality", "hospitality"),
+            ("Agriculture", "agriculture"),
+            ("Energy", "energy"),
+            ("NGO", "ngo"),
+            ("Media", "media"),
+            ("Other", "other")
         }.Select(c => new JobCategory
         {
             Id = Guid.NewGuid(),
@@ -139,5 +171,65 @@ public static class DataSeeder
         });
 
         await context.JobCategories.AddRangeAsync(categories);
+    }
+
+    private static async Task SeedPlansAsync(AppDbContext context)
+    {
+        if (await context.Plans.AnyAsync()) return;
+
+        var plans = new[]
+        {
+            new Plan
+            {
+                Id = Guid.NewGuid(),
+                Name = "Free",
+                Price = 0,
+                MaxJobListings = 5
+            },
+            new Plan
+            {
+                Id = Guid.NewGuid(),
+                Name = "Standard",
+                Price = 9,
+                MaxJobListings = 15
+            },
+            new Plan
+            {
+                Id = Guid.NewGuid(),
+                Name = "VIP",
+                Price = 19,
+                MaxJobListings = 30
+            },
+            new Plan
+            {
+                Id = Guid.NewGuid(),
+                Name = "SuperVIP",
+                Price = 49,
+                MaxJobListings = int.MaxValue
+            }
+        };
+
+        await context.Plans.AddRangeAsync(plans);
+    }
+
+    private static async Task SeedBlogCategoriesAsync(AppDbContext context)
+    {
+        if (await context.BlogCategories.AnyAsync()) return;
+
+        var categories = new[]
+        {
+            ("IT and Technology", "it-technology"),
+            ("Career Tips", "career-tips"),
+            ("CV and Interview", "cv-interview"),
+            ("Finance", "finance"),
+            ("HR and Management", "hr-management")
+        }.Select(c => new BlogCategory
+        {
+            Id = Guid.NewGuid(),
+            Name = c.Item1,
+            Slug = c.Item2
+        });
+
+        await context.BlogCategories.AddRangeAsync(categories);
     }
 }

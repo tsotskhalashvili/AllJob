@@ -14,8 +14,8 @@ public static class ApplicationMappings
             CompanyName: application.Job.Company.Name,
             CvUrl: application.CvUrl,
             CoverLetter: application.CoverLetter,
-            Status: application.Status,
-            AppliedAt: application.AppliedAt
+            Status: application.Status
+            
         );
 
     public static JobApplication ToEntity(
@@ -26,7 +26,7 @@ public static class ApplicationMappings
             UserId = userId,
             CvUrl = dto.CvUrl,
             CoverLetter = dto.CoverLetter,
-            AppliedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
             Status = ApplicationStatus.Pending
         };
 }

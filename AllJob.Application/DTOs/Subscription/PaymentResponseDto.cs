@@ -8,5 +8,5 @@ public record PaymentResponseDto(
     string PlanName,
     decimal Amount,
     PaymentStatus Status,
-    DateTime PaidAt
+    DateTime? PaidAt
 );

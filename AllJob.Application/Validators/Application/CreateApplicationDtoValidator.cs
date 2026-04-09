@@ -12,10 +12,10 @@ public class CreateApplicationDtoValidator
             .NotEmpty();
 
         RuleFor(x => x.CvUrl)
-            .NotEmpty()
-            .MaximumLength(512)
-            .Must(u => Uri.TryCreate(u, UriKind.Absolute, out _))
-            .WithMessage("CvUrl must be a valid URL");
+         .MaximumLength(512)
+         .Must(u => Uri.TryCreate(u, UriKind.Absolute, out _))
+         .When(x => !string.IsNullOrEmpty(x.CvUrl))
+         .WithMessage("CvUrl must be a valid URL");
 
         RuleFor(x => x.CoverLetter)
             .MaximumLength(3000)

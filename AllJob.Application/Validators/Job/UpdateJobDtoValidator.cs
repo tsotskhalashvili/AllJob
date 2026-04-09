@@ -9,11 +9,13 @@ public class UpdateJobDtoValidator : AbstractValidator<UpdateJobDto>
     {
         RuleFor(x => x.Title)
             .NotEmpty()
-            .MaximumLength(256);
+            .MaximumLength(256)
+            .When(x => x.Title is not null);
 
         RuleFor(x => x.Description)
             .NotEmpty()
-            .MaximumLength(5000);
+            .MaximumLength(5000)
+            .When(x => x.Description is not null);
 
         RuleFor(x => x.SalaryMin)
             .GreaterThan(0)
@@ -30,6 +32,7 @@ public class UpdateJobDtoValidator : AbstractValidator<UpdateJobDto>
 
         RuleFor(x => x.ExpiresAt)
             .Must(d => d > DateTime.UtcNow)
+            .When(x => x.ExpiresAt.HasValue)
             .WithMessage("ExpiresAt must be in the future");
     }
 }

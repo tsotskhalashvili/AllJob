@@ -30,6 +30,13 @@ public class JobRepository(AppDbContext context)
         if (filter.CategoryId.HasValue)
             query = query.Where(j => j.CategoryId == filter.CategoryId);
 
+        if (filter.ExperienceLevel.HasValue)
+            query = query.Where(j => j.ExperienceLevel == filter.ExperienceLevel);
+
+        if (filter.SkillIds is not null && filter.SkillIds.Any())
+            query = query.Where(j => j.JobSkills
+                .Any(js => filter.SkillIds.Contains(js.SkillId)));
+
         if (!string.IsNullOrEmpty(filter.Country))
             query = query.Where(j => j.Address!.Country == filter.Country);
 
@@ -39,19 +46,17 @@ public class JobRepository(AppDbContext context)
         if (filter.WorkType.HasValue)
             query = query.Where(j => j.WorkType == filter.WorkType);
 
-       
         if (filter.SalaryMin.HasValue)
             query = query.Where(j => j.SalaryMin >= filter.SalaryMin);
 
         if (filter.SalaryMax.HasValue)
             query = query.Where(j => j.SalaryMax <= filter.SalaryMax);
 
-      
         var totalCount = await query.CountAsync();
 
-      
         var jobs = await query
-            .OrderByDescending(j => j.CreatedAt)
+            .OrderByDescending(j => j.Company.Tier)
+            .ThenByDescending(j => j.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();
@@ -76,7 +81,7 @@ public class JobRepository(AppDbContext context)
 
     public async Task<IReadOnlyList<Job>> GetExpiredJobsAsync()
         => await _dbSet
-        .AsNoTracking()
+            .AsNoTracking()
             .Where(j => j.ExpiresAt < DateTime.UtcNow
                 && j.Status != JobStatus.Expired)
             .ToListAsync();

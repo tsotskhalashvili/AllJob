@@ -10,6 +10,8 @@ public class JobFilterDto
     public string? Country { get; set; }
     public string? City { get; set; }
     public WorkType? WorkType { get; set; }
+    public ExperienceLevel? ExperienceLevel { get; set; }  
+    public List<Guid>? SkillIds { get; set; }
     public decimal? SalaryMin { get; set; }
     public decimal? SalaryMax { get; set; }
     public int Page { get; set; } = 1;

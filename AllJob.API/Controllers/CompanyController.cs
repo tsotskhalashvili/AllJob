@@ -37,7 +37,7 @@ IValidator<UpdateCompanyDto> updateValidator)
     }
 
     [Authorize(Roles = "Employer")]
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<IActionResult> UpdateCompany(
         Guid id, [FromBody] UpdateCompanyDto dto)
     {

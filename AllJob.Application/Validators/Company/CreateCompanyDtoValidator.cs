@@ -12,9 +12,10 @@ public class CreateCompanyDtoValidator : AbstractValidator<CreateCompanyDto>
             .MaximumLength(256);
 
         RuleFor(x => x.Website)
-            .NotEmpty()
+         
             .MaximumLength(256)
             .Must(w => Uri.TryCreate(w, UriKind.Absolute, out _))
+            .When(x => !string.IsNullOrEmpty(x.Website))
             .WithMessage("Website must be a valid URL");
 
         RuleFor(x => x.Industry)

@@ -45,9 +45,9 @@ public class JobController(
     }
 
     [Authorize(Roles = "Employer")]
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<IActionResult> UpdateJob(
-       Guid id, UpdateJobDto dto)
+       Guid id, [FromBody] UpdateJobDto dto)
     {
         await ValidateAsync(updateValidator, dto);
 

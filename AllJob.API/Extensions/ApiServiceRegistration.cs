@@ -19,14 +19,22 @@ public static class ApiServiceRegistration
 
         services.AddScoped<IFileUploadService,
             CloudinaryService>();
+        services.AddScoped<IEmailService, SendGridEmailService>(); 
 
-        
+
 
         services.Configure<JwtSettings>(
     configuration.GetSection("JwtSettings"));
 
         services.Configure<CloudinarySettings>(
     configuration.GetSection("CloudinarySettings"));
+
+        services.Configure<SendGridSettings>(
+            configuration.GetSection("SendGridSettings")); 
+
+        services.Configure<AppSettings>(
+    configuration.GetSection("AppSettings"));
+
 
         services.Configure<AdminSettings>(
     configuration.GetSection("AdminSettings"));

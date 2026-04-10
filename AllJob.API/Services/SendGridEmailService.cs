@@ -21,7 +21,14 @@ public class SendGridEmailService(
         msg.AddTo(new EmailAddress(toEmail));
         msg.SetTemplateId(templateId);
         msg.SetTemplateData(templateData);
-        await client.SendEmailAsync(msg);
+
+        var response = await client.SendEmailAsync(msg);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Body.ReadAsStringAsync();
+            throw new Exception($"SendGrid error: {body}");
+        }
     }
 
     public async Task SendForgotPasswordAsync(string toEmail, string resetToken)

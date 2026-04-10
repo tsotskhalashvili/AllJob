@@ -20,6 +20,8 @@ namespace AllJob.Application.Services
             IGenericRepository<Role> roleRepository,
             IGenericRepository<UserRole> userRoleRepository,
             IRefreshTokenRepository refreshTokenRepository,
+            IPasswordResetTokenRepository passwordResetTokenRepository,
+            IEmailService emailService,
             IUnitOfWork unitOfWork,
             IOptions<JwtSettings> jwtSettings
         ) : IAuthService
@@ -131,6 +133,80 @@ namespace AllJob.Application.Services
             await unitOfWork.SaveChangesAsync();
         }
 
+
+        public async Task ForgotPasswordAsync(ForgotPasswordDto dto)
+        {
+            var user = await userRepository.GetByEmailAsync(dto.Email);
+
+            if (user is null) return;
+
+            var existingToken = await passwordResetTokenRepository
+                .GetActiveTokenByUserIdAsync(user.Id);
+
+            if (existingToken is  not null)
+            {
+                existingToken.IsUsed = true;
+                passwordResetTokenRepository.Update(existingToken);
+
+            }
+            var token = Convert.ToBase64String(
+                RandomNumberGenerator.GetBytes(64));
+
+
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddHours(1),
+                IsUsed = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await passwordResetTokenRepository.AddAsync(resetToken);
+            await unitOfWork.SaveChangesAsync();
+
+            await emailService.SendForgotPasswordAsync(user.Email, token);
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            var resetToken = await passwordResetTokenRepository
+                .GetByTokenAsync(dto.Token)
+                ?? throw new NotFoundException("Token", dto.Token);
+
+            if (resetToken.IsUsed)
+                throw new ConflictException("Token is already used");
+
+            if (resetToken.ExpiresAt < DateTime.UtcNow)
+                throw new ConflictException("Token has expired");
+
+            var user = resetToken.User;
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            userRepository.Update(user);
+            resetToken.IsUsed = true;  
+            passwordResetTokenRepository.Update(resetToken);
+
+            await unitOfWork.SaveChangesAsync();
+         
+        }
+
+        public async Task ChangePasswordAsync(ChangePasswordDto dto, Guid userId)
+        {
+            var user = await userRepository.GetByIdAsync(userId)
+               ?? throw new NotFoundException("User", userId);
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+                throw new UnauthorizedException("Current password is incorrect");
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            userRepository.Update(user);
+            await unitOfWork.SaveChangesAsync();
+
+
+        }
+
         #endregion
 
         #region PrivateMethods
@@ -201,6 +277,7 @@ namespace AllJob.Application.Services
 
         }
 
+      
 
         #endregion
 

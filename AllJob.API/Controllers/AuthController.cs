@@ -1,7 +1,9 @@
 ﻿using AllJob.Application.DTOs.Auth;
 using AllJob.Application.Interfaces.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AllJob.API.Controllers;
 
@@ -10,7 +12,11 @@ namespace AllJob.API.Controllers;
 public class AuthController(
     IAuthService authService,
     IValidator<RegisterDto> registerValidator,
-    IValidator<LoginDto> loginValidator)
+    IValidator<LoginDto> loginValidator,
+     IValidator<ForgotPasswordDto> forgotPasswordValidator,
+    IValidator<ResetPasswordDto> resetPasswordValidator,
+    IValidator<ChangePasswordDto> changePasswordValidator)
+
     : BaseController
 {
     [HttpPost("register")]
@@ -41,5 +47,38 @@ public class AuthController(
     {
         await authService.RevokeTokenAsync(dto);
         return NoContent();
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(
+        [FromBody] ForgotPasswordDto dto)
+    {
+        await ValidateAsync(forgotPasswordValidator, dto);
+        await authService.ForgotPasswordAsync(dto);
+        return NoContent();
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(
+        [FromBody] ResetPasswordDto dto)
+    {
+        await ValidateAsync(resetPasswordValidator, dto);
+        await authService.ResetPasswordAsync(dto);
+        return NoContent();
+
+    }
+
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(
+        [FromBody] ChangePasswordDto dto)
+    {
+        await ValidateAsync(changePasswordValidator, dto);
+        var userId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await authService.ChangePasswordAsync(dto, userId);
+        return NoContent();
+
     }
 }

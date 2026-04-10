@@ -46,6 +46,8 @@ public static class PersistenceServiceRegistration
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<ISavedJobRepository, SavedJobRepository>();
         services.AddScoped<IPlanRepository, PlanRepository>();
+        services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
+
 
 
 

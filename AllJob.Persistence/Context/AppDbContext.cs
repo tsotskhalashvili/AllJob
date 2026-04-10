@@ -24,6 +24,8 @@ public class AppDbContext : DbContext
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<AdminInvite> AdminInvites => Set<AdminInvite>();
+   
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
     // Candidate
     public DbSet<CandidateProfile> CandidateProfiles => Set<CandidateProfile>();

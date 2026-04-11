@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Common;
 using AllJob.Application.DTOs.Company;
+using AllJob.Application.DTOs.Job;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories.Companies;
@@ -57,6 +58,17 @@ public class CompanyService(
     }
 
     public async Task<PagedResponseDto<CompanyResponseDto>> GetCompaniesAsync(
-    CompanyFilterDto filter)
-    => await companyRepository.GetPagedCompaniesAsync(filter);
+        CompanyFilterDto filter)
+        => await companyRepository.GetPagedCompaniesAsync(filter);
+
+    public async Task<IReadOnlyList<JobResponseDto>> GetCompanyJobsAsync(Guid companyId)
+    {
+        var company = await companyRepository
+            .GetCompanyWithDetailsAsync(companyId)
+            ?? throw new NotFoundException("Company", companyId);
+
+        return company.Jobs
+            .Select(j => j.ToDto())
+            .ToList();
+    }
 }

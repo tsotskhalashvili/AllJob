@@ -65,4 +65,11 @@ IValidator<UpdateCompanyDto> updateValidator)
         var result = await companyService.GetCompaniesAsync(filter);
         return Ok(result);
     }
+
+    [HttpGet("{id}/jobs")]
+    public async Task<IActionResult> GetCompanyJobs(Guid id)
+    {
+        var result = await companyService.GetCompanyJobsAsync(id);
+        return Ok(result);
+    }
 }

@@ -17,6 +17,14 @@ public class CompanyRepository(AppDbContext context)
         => await _dbSet
             .AsNoTracking()
             .Include(c => c.Jobs)
+                .ThenInclude(j => j.Company)     // ← ახალი
+            .Include(c => c.Jobs)
+                .ThenInclude(j => j.JobSkills)
+                    .ThenInclude(js => js.Skill)
+            .Include(c => c.Jobs)
+                .ThenInclude(j => j.Category)
+            .Include(c => c.Jobs)
+                .ThenInclude(j => j.Address)
             .Include(c => c.Reviews)
             .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -28,7 +36,7 @@ public class CompanyRepository(AppDbContext context)
             .CountAsync(j => j.Status == JobStatus.Active);
 
     public async Task<PagedResponseDto<CompanyResponseDto>> GetPagedCompaniesAsync(
-    CompanyFilterDto filter)
+        CompanyFilterDto filter)
     {
         var query = _dbSet
             .AsNoTracking()

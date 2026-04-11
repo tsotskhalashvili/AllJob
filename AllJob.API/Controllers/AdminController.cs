@@ -1,4 +1,4 @@
-﻿using AllJob.Application.Interfaces.Services;
+﻿using AllJob.Application.Interfaces.Services.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

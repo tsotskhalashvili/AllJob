@@ -1,5 +1,5 @@
 ﻿using AllJob.Application.DTOs.Job;
-using AllJob.Application.Interfaces.Services;
+using AllJob.Application.Interfaces.Services.Job;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

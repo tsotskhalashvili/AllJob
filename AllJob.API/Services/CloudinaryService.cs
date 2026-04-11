@@ -1,4 +1,4 @@
-﻿using AllJob.Application.Interfaces.Services;
+﻿using AllJob.Application.Interfaces.Services.Shared;
 using AllJob.Application.Settings;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;

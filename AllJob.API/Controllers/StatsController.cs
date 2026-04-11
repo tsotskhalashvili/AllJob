@@ -1,4 +1,4 @@
-﻿using AllJob.Application.Interfaces.Services;
+﻿using AllJob.Application.Interfaces.Services.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AllJob.API.Controllers;

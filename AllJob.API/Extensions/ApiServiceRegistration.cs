@@ -1,13 +1,13 @@
-﻿    using AllJob.API.Services;
-    using AllJob.API.Services.Interfaces;
-    using AllJob.Application.Interfaces.Services;
-    using AllJob.Application.Settings;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.IdentityModel.Tokens;
-    using Microsoft.OpenApi.Models;
-    using System.Text;
+﻿using AllJob.API.Services;
+using AllJob.API.Services.Interfaces;
+using AllJob.Application.Interfaces.Services.Shared;
+using AllJob.Application.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
-    namespace AllJob.API.Extensions;
+namespace AllJob.API.Extensions;
 
     public static class ApiServiceRegistration
     {       

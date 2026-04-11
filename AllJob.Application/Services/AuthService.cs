@@ -6,6 +6,7 @@ using AllJob.Application.Interfaces.Services;
 using AllJob.Application.Mappings;
 using AllJob.Application.Settings;
 using AllJob.Domain.Entities.Auth;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -23,12 +24,14 @@ namespace AllJob.Application.Services
             IPasswordResetTokenRepository passwordResetTokenRepository,
             IEmailService emailService,
             IUnitOfWork unitOfWork,
-            IOptions<JwtSettings> jwtSettings
+            IOptions<JwtSettings> jwtSettings,
+            IOptions<GoogleSettings> googleSettings
         ) : IAuthService
 
     {
 
         private readonly JwtSettings _jwt = jwtSettings.Value;
+        private readonly GoogleSettings _google = googleSettings.Value;
 
         #region PublicMethods
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
@@ -89,6 +92,70 @@ namespace AllJob.Application.Services
                 ?? throw new UnauthorizedException("User has no assigned role");
 
             return await GenerateAuthResponseAsync(user, role.Name);
+        }
+
+        public async Task<AuthResponseDto> GoogleLoginAsync(GoogleAuthDto dto)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(
+                dto.IdToken,
+                new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] {_google.ClientId}
+                });
+
+            var user = await userRepository.GetByEmailAsync(payload.Email);
+            if (user is null)
+            {
+                var roles = await roleRepository.GetAllAsync();
+                var role = roles.FirstOrDefault(r => r.Name == dto.Role)
+                    ?? throw new NotFoundException("Role", dto.Role);
+
+                user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Email = payload.Email,
+                    PasswordHash = string.Empty,
+                    IsActive = true,
+                    IsExternalLogin = true,
+                    IsPasswordChangeRequired = false
+                };
+
+                await unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    await userRepository.AddAsync(user);
+                    await unitOfWork.SaveChangesAsync();
+
+                    await userRoleRepository.AddAsync(new UserRole
+                    {
+                        UserId = user.Id,
+                        RoleId = role.Id
+                    });
+                    await unitOfWork.SaveChangesAsync();
+                    await unitOfWork.CommitAsync();
+                }
+                catch 
+                {
+
+                    await unitOfWork.RollbackAsync();
+                    throw;
+                }
+
+                var userRole = role.Name;
+                return await GenerateAuthResponseAsync(user, userRole);
+            }
+            if (!user.IsActive)
+                throw new ForbiddenException("Account is deactivated");
+
+            var existingRole = await userRepository
+                .GetByIdWithRolesAsync(user.Id);
+
+            var roleName = existingRole!.UserRoles
+                .FirstOrDefault()?.Role.Name
+                ?? throw new UnauthorizedException("User has no assigned role");
+
+            return await GenerateAuthResponseAsync(user, roleName);
+
         }
 
         public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto dto)

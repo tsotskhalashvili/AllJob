@@ -39,6 +39,9 @@
             services.Configure<AdminSettings>(
         configuration.GetSection("AdminSettings"));
 
+        services.Configure<GoogleSettings>(
+            configuration.GetSection("GoogleSettings"));
+
 
             var jwtSettings = configuration
                 .GetSection("JwtSettings")

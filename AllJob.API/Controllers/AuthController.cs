@@ -15,7 +15,8 @@ public class AuthController(
     IValidator<LoginDto> loginValidator,
      IValidator<ForgotPasswordDto> forgotPasswordValidator,
     IValidator<ResetPasswordDto> resetPasswordValidator,
-    IValidator<ChangePasswordDto> changePasswordValidator)
+    IValidator<ChangePasswordDto> changePasswordValidator,
+    IValidator<GoogleAuthDto> googleAuthValidator)
 
     : BaseController
 {
@@ -32,6 +33,15 @@ public class AuthController(
     {
         await ValidateAsync(loginValidator, dto);
         var result = await authService.LoginAsync(dto);
+        return Ok(result);
+    }
+
+    [HttpPost("google")]
+    public async Task<IActionResult> GoogleLogin(
+    [FromBody] GoogleAuthDto dto)
+    {
+        await ValidateAsync(googleAuthValidator, dto);
+        var result = await authService.GoogleLoginAsync(dto);
         return Ok(result);
     }
 

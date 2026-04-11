@@ -57,4 +57,12 @@ IValidator<UpdateCompanyDto> updateValidator)
         await companyService.DeleteCompanyAsync(id, userId);
         return NoContent();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCompanies(
+    [FromQuery] CompanyFilterDto filter)
+    {
+        var result = await companyService.GetCompaniesAsync(filter);
+        return Ok(result);
+    }
 }

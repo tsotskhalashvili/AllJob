@@ -7,3 +7,4 @@ public record CreateBlogPostDto(
     string? CoverImageUrl,
     Guid BlogCategoryId
 );
+ 

@@ -1,4 +1,7 @@
-﻿using AllJob.Application.Interfaces.Repositories.Companies;
+﻿using AllJob.Application.DTOs.Common;
+using AllJob.Application.DTOs.Company;
+using AllJob.Application.Interfaces.Repositories.Companies;
+using AllJob.Application.Mappings;
 using AllJob.Domain.Entities.Companies;
 using AllJob.Domain.Enums.Jobs;
 using AllJob.Persistence.Context;
@@ -23,4 +26,36 @@ public class CompanyRepository(AppDbContext context)
             .Where(c => c.Id == companyId)
             .SelectMany(c => c.Jobs)
             .CountAsync(j => j.Status == JobStatus.Active);
+
+    public async Task<PagedResponseDto<CompanyResponseDto>> GetPagedCompaniesAsync(
+    CompanyFilterDto filter)
+    {
+        var query = _dbSet
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(filter.Name))
+            query = query.Where(c => c.Name.Contains(filter.Name));
+
+        if (!string.IsNullOrEmpty(filter.Industry))
+            query = query.Where(c => c.Industry == filter.Industry);
+
+        if (filter.IsVerified.HasValue)
+            query = query.Where(c => c.IsVerified == filter.IsVerified);
+
+        var totalCount = await query.CountAsync();
+
+        var companies = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ToListAsync();
+
+        return new PagedResponseDto<CompanyResponseDto>(
+            Items: companies.Select(c => c.ToDto()).ToList(),
+            TotalCount: totalCount,
+            Page: filter.Page,
+            PageSize: filter.PageSize
+        );
+    }
 }

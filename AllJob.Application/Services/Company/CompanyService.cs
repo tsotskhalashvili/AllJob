@@ -1,4 +1,5 @@
-﻿using AllJob.Application.DTOs.Company;
+﻿using AllJob.Application.DTOs.Common;
+using AllJob.Application.DTOs.Company;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories.Companies;
@@ -54,4 +55,8 @@ public class CompanyService(
         companyRepository.Delete(company);
         await unitOfWork.SaveChangesAsync();
     }
+
+    public async Task<PagedResponseDto<CompanyResponseDto>> GetCompaniesAsync(
+    CompanyFilterDto filter)
+    => await companyRepository.GetPagedCompaniesAsync(filter);
 }

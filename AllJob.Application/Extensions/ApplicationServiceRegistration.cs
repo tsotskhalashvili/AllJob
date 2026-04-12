@@ -43,6 +43,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IStatsService, StatsService>();
+        services.AddScoped<ICompanyReviewService, CompanyReviewService>();
 
 
         return services;

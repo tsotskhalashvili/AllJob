@@ -6,17 +6,21 @@ namespace AllJob.Application.Mappings;
 public static class CompanyMappings
 {
     public static CompanyResponseDto ToDto(this Company company)
-        => new(
-            Id: company.Id,
-            Name: company.Name,
-            LogoUrl: company.LogoUrl,
-            Website: company.Website,
-            FacebookUrl: company.FacebookUrl,
-            Description: company.Description,
-            Industry: company.Industry,
-            IsVerified: company.IsVerified,
-            CreatedAt: company.CreatedAt
-        );
+       => new(
+           Id: company.Id,
+           Name: company.Name,
+           LogoUrl: company.LogoUrl,
+           Website: company.Website,
+           FacebookUrl: company.FacebookUrl,
+           Description: company.Description,
+           Industry: company.Industry,
+           IsVerified: company.IsVerified,
+           AverageRating: company.Reviews.Any(r => r.IsApproved)
+               ? company.Reviews.Where(r => r.IsApproved).Average(r => r.Rating)
+               : 0,
+           ReviewCount: company.Reviews.Count(r => r.IsApproved),
+           CreatedAt: company.CreatedAt
+       );
 
     public static Company ToEntity(this CreateCompanyDto dto, Guid userId)
         => new()

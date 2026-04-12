@@ -54,6 +54,7 @@ public class CompanyRepository(AppDbContext context)
         var totalCount = await query.CountAsync();
 
         var companies = await query
+            .Include(c => c.Reviews)
             .OrderByDescending(c => c.CreatedAt)
             .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize)

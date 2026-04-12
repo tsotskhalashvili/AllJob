@@ -9,5 +9,7 @@ public record CompanyResponseDto(
     string? Description,
     string Industry,
     bool IsVerified,
+    double AverageRating,  
+    int ReviewCount,
     DateTime CreatedAt
 );

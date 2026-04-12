@@ -9,11 +9,12 @@ namespace AllJob.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-
 public class CompanyController(
-ICompanyService companyService,
-IValidator<CreateCompanyDto> createValidator,
-IValidator<UpdateCompanyDto> updateValidator)
+    ICompanyService companyService,
+    ICompanyReviewService reviewService,
+    IValidator<CreateCompanyDto> createValidator,
+    IValidator<UpdateCompanyDto> updateValidator,
+    IValidator<CreateCompanyReviewDto> reviewValidator)
 : BaseController
 {
     [HttpGet("{id}")]
@@ -60,7 +61,7 @@ IValidator<UpdateCompanyDto> updateValidator)
 
     [HttpGet]
     public async Task<IActionResult> GetCompanies(
-    [FromQuery] CompanyFilterDto filter)
+        [FromQuery] CompanyFilterDto filter)
     {
         var result = await companyService.GetCompaniesAsync(filter);
         return Ok(result);
@@ -71,5 +72,24 @@ IValidator<UpdateCompanyDto> updateValidator)
     {
         var result = await companyService.GetCompanyJobsAsync(id);
         return Ok(result);
+    }
+
+    [HttpGet("{id}/reviews")]
+    public async Task<IActionResult> GetCompanyReviews(Guid id)
+    {
+        var result = await reviewService.GetCompanyReviewsAsync(id);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Candidate")]
+    [HttpPost("{id}/reviews")]
+    public async Task<IActionResult> CreateReview(
+        Guid id, [FromBody] CreateCompanyReviewDto dto)
+    {
+        await ValidateAsync(reviewValidator, dto);
+        var userId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await reviewService.CreateReviewAsync(id, dto, userId);
+        return NoContent();
     }
 }

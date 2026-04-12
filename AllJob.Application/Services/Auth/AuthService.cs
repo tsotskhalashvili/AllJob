@@ -250,7 +250,8 @@ namespace AllJob.Application.Services.Auth
             if (resetToken.ExpiresAt < DateTime.UtcNow)
                 throw new ConflictException("Token has expired");
 
-            var user = resetToken.User;
+            var user = resetToken.User
+    ?? throw new NotFoundException("User", resetToken.UserId);
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             userRepository.Update(user);

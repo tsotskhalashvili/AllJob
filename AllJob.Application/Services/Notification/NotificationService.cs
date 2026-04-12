@@ -12,12 +12,30 @@ public class NotificationService(
     IUnitOfWork unitOfWork
     ) : INotificationService
 {
+    public async Task DeleteAsync(Guid notificationId, Guid userId)
+    {
+        var notification = await notificationRepository
+            .GetByIdAsync(notificationId)
+                ?? throw new NotFoundException("Notification", notificationId);
+
+        if (notification.UserId != userId)
+            throw new ForbiddenException();
+
+        notificationRepository.Delete(notification);
+        await unitOfWork.SaveChangesAsync();
+    }
+
     public async Task<IReadOnlyList<NotificationResponseDto>> GetMyNotificationsAsync(Guid userId)
     {
         var notifications = await notificationRepository
              .GetByUserIdAsync(userId);
 
         return notifications.Select(n => n.ToDto()).ToList();
+    }
+
+    public async Task MarkAllAsReadAsync(Guid userId)
+    {
+        await notificationRepository.MarkAllAsReadAsync(userId);
     }
 
     public async Task MarkAsReadAsync(Guid notificationId, Guid userId)

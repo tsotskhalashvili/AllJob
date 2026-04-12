@@ -6,4 +6,6 @@ public interface INotificationService
 {
     Task<IReadOnlyList<NotificationResponseDto>> GetMyNotificationsAsync(Guid userId);
     Task MarkAsReadAsync(Guid notificationId, Guid userId);
+    Task DeleteAsync(Guid notificationId, Guid userId);
+    Task MarkAllAsReadAsync(Guid userId);
 } 

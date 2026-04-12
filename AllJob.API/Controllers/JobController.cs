@@ -69,4 +69,14 @@ public class JobController(
         return NoContent();
     }
 
+    [Authorize(Roles = "Employer")]
+    [HttpGet("{id}/applications/count")]
+    public async Task<IActionResult> GetApplicationsCount(Guid id)
+    {
+        var userId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var result = await jobService.GetApplicationsCountAsync(id, userId);
+        return Ok(result);
+    }
+
 }

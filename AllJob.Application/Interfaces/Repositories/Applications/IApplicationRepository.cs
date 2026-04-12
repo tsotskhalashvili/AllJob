@@ -7,5 +7,6 @@ public interface IApplicationRepository : IGenericRepository<JobApplication>
     Task<IReadOnlyList<JobApplication>> GetCandidateApplicationsAsync(Guid userId);
 
     Task<IReadOnlyList<JobApplication>> GetJobApplicationsAsync(Guid jobId);
+    Task<int> GetCountByJobIdAsync(Guid jobId);
 
 }

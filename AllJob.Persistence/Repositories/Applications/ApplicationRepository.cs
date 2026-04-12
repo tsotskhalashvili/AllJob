@@ -18,6 +18,10 @@ public class ApplicationRepository(AppDbContext context)
         
         .ToListAsync();
 
+    public async Task<int> GetCountByJobIdAsync(Guid jobId)
+      => await _dbSet
+        .CountAsync(a => a.JobId == jobId);
+
     public async Task<IReadOnlyList<JobApplication>> GetJobApplicationsAsync(
      Guid jobId)
      => await _dbSet

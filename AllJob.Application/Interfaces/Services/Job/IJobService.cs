@@ -10,4 +10,6 @@ public interface IJobService
     Task<JobResponseDto> CreateJobAsync(CreateJobDto dto, Guid userId);
     Task UpdateJobAsync(Guid id, UpdateJobDto dto, Guid userId);
     Task DeleteJobAsync(Guid id, Guid userId);
+
+    Task<int> GetApplicationsCountAsync(Guid jobId, Guid userId);
 }

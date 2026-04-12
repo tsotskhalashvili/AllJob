@@ -2,6 +2,7 @@
 using AllJob.Application.DTOs.Job;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
+using AllJob.Application.Interfaces.Repositories.Applications;
 using AllJob.Application.Interfaces.Repositories.Companies;
 using AllJob.Application.Interfaces.Repositories.Jobs;
 using AllJob.Application.Interfaces.Repositories.Subscriptions;
@@ -14,6 +15,7 @@ namespace AllJob.Application.Services.Job;
 public class JobService(
     IJobRepository jobRepository,
     ICompanyRepository companyRepository,
+    IApplicationRepository applicationRepository,
     IPlanRepository planRepository,
     IUnitOfWork unitOfWork) : IJobService
 {
@@ -69,6 +71,20 @@ public class JobService(
 
         jobRepository.Delete(job);
         await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<int> GetApplicationsCountAsync(Guid jobId, Guid userId)
+    {
+        var job = await jobRepository.GetByIdAsync(jobId)
+            ?? throw new NotFoundException("Job", jobId);
+
+        var company = await companyRepository.GetByIdAsync(job.CompanyId)
+            ?? throw new NotFoundException("Company", job.CompanyId);
+
+        if (company.UserId != userId)
+            throw new ForbiddenException();
+
+        return await applicationRepository.GetCountByJobIdAsync(jobId);
     }
 
     public async Task<JobResponseDto> GetJobByIdAsync(Guid id)

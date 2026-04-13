@@ -9,6 +9,16 @@ namespace AllJob.Persistence.Repositories.Candidate;
 public class CandidateRepository(AppDbContext context)
     : GenericRepository<CandidateProfile>(context), ICandidateRepository
 {
+    public async Task<CandidateProfile?> GetByIdWithDetailsAsync(Guid candidateId)
+      => await _dbSet
+        .AsNoTracking()
+        .Include(c => c.Address)
+        .Include(c => c.Skills)
+          .ThenInclude(cs => cs.Skill)
+        .Include(c => c.Experiences)
+        .Include(c => c.Educations)
+        .FirstOrDefaultAsync(c => c.Id == candidateId);
+
     public async Task<CandidateProfile?> GetCandidateWithDetailsAsync(Guid userId)
         => await _dbSet
             .AsNoTracking()

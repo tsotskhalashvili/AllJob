@@ -49,6 +49,14 @@ public class CandidateService(
         return created.ToDto();
     }
 
+    public async Task<CandidateResponseDto> GetPublicProfileAsync(Guid candidateId)
+    {
+        var candidate = await candidateRepository
+            .GetByIdWithDetailsAsync(candidateId)
+            ?? throw new NotFoundException("CandidateProfile", candidateId);
+
+        return candidate.ToDto();
+    }
     public async Task<CandidateResponseDto> UpdateProfileAsync(
         UpdateCandidateProfileDto dto, Guid userId)
     {

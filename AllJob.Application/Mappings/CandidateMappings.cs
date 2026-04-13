@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Candidate;
 using AllJob.Domain.Entities.Candidate;
+using AllJob.Domain.Enums.Candidate;
 using System.Diagnostics.Metrics;
 
 namespace AllJob.Application.Mappings;
@@ -36,6 +37,17 @@ public static class CandidateMappings
             EndDate: experience.EndDate
         );
 
+    public static CandidateExperience ToEntity(
+    this ExperienceDto dto, Guid candidateProfileId)
+    => new()
+    {
+        CandidateProfileId = candidateProfileId,
+        CompanyName = dto.CompanyName,
+        Position = dto.Position,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate
+    };
+
     public static EducationDto ToDto(this CandidateEducation education)
         => new(
             InstitutionName: education.InstitutionName,
@@ -44,6 +56,18 @@ public static class CandidateMappings
             StartDate: education.StartDate,
             EndDate: education.EndDate
         );
+
+    public static CandidateEducation ToEntity(
+    this EducationDto dto, Guid candidateProfileId)
+    => new()
+    {
+        CandidateProfileId = candidateProfileId,
+        InstitutionName = dto.InstitutionName,
+        Degree = Enum.Parse<DegreeType>(dto.Degree),
+        FieldOfStudy = dto.FieldOfStudy,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate
+    };
 
     public static CandidateProfile ToEntity(
         this CreateCandidateProfileDto dto, Guid userId)

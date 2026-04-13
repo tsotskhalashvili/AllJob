@@ -44,6 +44,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IStatsService, StatsService>();
         services.AddScoped<ICompanyReviewService, CompanyReviewService>();
+        services.AddScoped<ICandidateExperienceService, CandidateExperienceService>();
+        services.AddScoped<ICandidateEducationService, CandidateEducationService>();
 
 
         return services;

@@ -12,12 +12,26 @@ namespace AllJob.API.Controllers;
 [Authorize(Roles = "Candidate")]
 public class CandidateController(
     ICandidateService candidateService,
+    ICandidateExperienceService experienceService,
+    ICandidateEducationService educationService,
     IValidator<CreateCandidateProfileDto> createValidator,
-    IValidator<UpdateCandidateProfileDto> updateValidator) : BaseController
+    IValidator<UpdateCandidateProfileDto> updateValidator,
+    IValidator<ExperienceDto> experienceValidator,
+    IValidator<EducationDto> educationValidator) : BaseController
 {
     private Guid UserId => Guid.Parse(
         User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
+    // Public
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPublicProfile(Guid id)
+    {
+        var result = await candidateService.GetPublicProfileAsync(id);
+        return Ok(result);
+    }
+
+    // Profile
     [HttpGet("profile")]
     public async Task<IActionResult> GetProfile()
     {
@@ -36,7 +50,7 @@ public class CandidateController(
 
     [HttpPatch("profile")]
     public async Task<IActionResult> PatchProfile(
-      [FromBody] UpdateCandidateProfileDto dto)
+        [FromBody] UpdateCandidateProfileDto dto)
     {
         await ValidateAsync(updateValidator, dto);
         var result = await candidateService.UpdateProfileAsync(dto, UserId);
@@ -47,6 +61,58 @@ public class CandidateController(
     public async Task<IActionResult> DeleteProfile()
     {
         await candidateService.DeleteProfileAsync(UserId);
+        return NoContent();
+    }
+
+    // Experience
+    [HttpPost("experience")]
+    public async Task<IActionResult> AddExperience(
+        [FromBody] ExperienceDto dto)
+    {
+        await ValidateAsync(experienceValidator, dto);
+        await experienceService.AddExperienceAsync(dto, UserId);
+        return NoContent();
+    }
+
+    [HttpPut("experience/{id}")]
+    public async Task<IActionResult> UpdateExperience(
+        Guid id, [FromBody] ExperienceDto dto)
+    {
+        await ValidateAsync(experienceValidator, dto);
+        await experienceService.UpdateExperienceAsync(id, dto, UserId);
+        return NoContent();
+    }
+
+    [HttpDelete("experience/{id}")]
+    public async Task<IActionResult> DeleteExperience(Guid id)
+    {
+        await experienceService.DeleteExperienceAsync(id, UserId);
+        return NoContent();
+    }
+
+    // Education
+    [HttpPost("education")]
+    public async Task<IActionResult> AddEducation(
+        [FromBody] EducationDto dto)
+    {
+        await ValidateAsync(educationValidator, dto);
+        await educationService.AddEducationAsync(dto, UserId);
+        return NoContent();
+    }
+
+    [HttpPut("education/{id}")]
+    public async Task<IActionResult> UpdateEducation(
+        Guid id, [FromBody] EducationDto dto)
+    {
+        await ValidateAsync(educationValidator, dto);
+        await educationService.UpdateEducationAsync(id, dto, UserId);
+        return NoContent();
+    }
+
+    [HttpDelete("education/{id}")]
+    public async Task<IActionResult> DeleteEducation(Guid id)
+    {
+        await educationService.DeleteEducationAsync(id, UserId);
         return NoContent();
     }
 }

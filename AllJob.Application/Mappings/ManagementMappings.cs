@@ -10,6 +10,8 @@ public static class ManagementMappings
         => new(
             Id: user.Id,
             Email: user.Email,
+            FirstName: user.AdminProfile!.FirstName,
+            LastName: user.AdminProfile!.LastName,
             Role: user.AdminRole!.Value,
             CreatedAt: user.CreatedAt
         );

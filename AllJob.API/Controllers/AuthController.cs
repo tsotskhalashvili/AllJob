@@ -1,5 +1,7 @@
 ﻿using AllJob.Application.DTOs.Auth;
+using AllJob.Application.DTOs.Management;
 using AllJob.Application.Interfaces.Services.Auth;
+using AllJob.Application.Interfaces.Services.Management;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +13,14 @@ namespace AllJob.API.Controllers;
 [ApiController]
 public class AuthController(
     IAuthService authService,
+    IManagementService managementService,
     IValidator<RegisterDto> registerValidator,
     IValidator<LoginDto> loginValidator,
      IValidator<ForgotPasswordDto> forgotPasswordValidator,
     IValidator<ResetPasswordDto> resetPasswordValidator,
     IValidator<ChangePasswordDto> changePasswordValidator,
-    IValidator<GoogleAuthDto> googleAuthValidator)
+    IValidator<GoogleAuthDto> googleAuthValidator,
+    IValidator<AcceptInviteDto> acceptInviteValidator)
 
     : BaseController
 {
@@ -90,5 +94,16 @@ public class AuthController(
         await authService.ChangePasswordAsync(dto, userId);
         return NoContent();
 
+    }
+
+
+    [AllowAnonymous]
+    [HttpPost("admin-invite/accept")]
+    public async Task<IActionResult> AcceptAdminInvite(
+        [FromBody] AcceptInviteDto dto)
+    {
+        await ValidateAsync(acceptInviteValidator, dto);
+        await managementService.AcceptInviteAsync(dto);
+        return NoContent();
     }
 }

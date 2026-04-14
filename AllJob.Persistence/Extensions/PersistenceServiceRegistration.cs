@@ -8,7 +8,6 @@ using AllJob.Application.Interfaces.Repositories.Jobs;
 using AllJob.Application.Interfaces.Repositories.Notifications;
 using AllJob.Application.Interfaces.Repositories.Shared;
 using AllJob.Application.Interfaces.Repositories.Subscriptions;
-using AllJob.Application.Settings;
 using AllJob.Persistence.Context;
 using AllJob.Persistence.Interceptors;
 using AllJob.Persistence.Repositories.Applications;
@@ -65,6 +64,8 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
         services.AddScoped<IStatsRepository, StatsRepository>();
         services.AddScoped<ICompanyReviewRepository, CompanyReviewRepository>();
+        services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
+
 
 
 

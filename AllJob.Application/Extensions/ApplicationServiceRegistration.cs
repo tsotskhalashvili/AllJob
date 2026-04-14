@@ -4,6 +4,7 @@ using AllJob.Application.Interfaces.Services.Auth;
 using AllJob.Application.Interfaces.Services.Candidate;
 using AllJob.Application.Interfaces.Services.Company;
 using AllJob.Application.Interfaces.Services.Job;
+using AllJob.Application.Interfaces.Services.Management;
 using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Interfaces.Services.Shared;
 using AllJob.Application.Interfaces.Services.Subscription;
@@ -13,6 +14,7 @@ using AllJob.Application.Services.Auth;
 using AllJob.Application.Services.Candidate;
 using AllJob.Application.Services.Company;
 using AllJob.Application.Services.Job;
+using AllJob.Application.Services.Management;
 using AllJob.Application.Services.Notification;
 using AllJob.Application.Services.Shared;
 using AllJob.Application.Services.Subscription;
@@ -46,6 +48,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<ICompanyReviewService, CompanyReviewService>();
         services.AddScoped<ICandidateExperienceService, CandidateExperienceService>();
         services.AddScoped<ICandidateEducationService, CandidateEducationService>();
+        services.AddScoped<IManagementService, ManagementService>();
 
 
         return services;

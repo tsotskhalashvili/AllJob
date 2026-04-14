@@ -13,6 +13,7 @@ public class User : BaseEntity
     public bool IsPasswordChangeRequired { get; set; }
     public bool IsExternalLogin { get; set; }
     public AdminRole? AdminRole { get; set; }
+    public AdminProfile? AdminProfile { get; set; }
 
     // Navigation Properties
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

@@ -18,4 +18,21 @@ public class StatsRepository(AppDbContext context) : IStatsRepository
     public async Task<int> GetTotalCandidatesCountAsync()
         => await context.CandidateProfiles
             .CountAsync();
+
+    public async Task<int> GetTotalUsersCountAsync()
+    => await context.Users.CountAsync();
+
+    public async Task<int> GetTotalJobsCountAsync()
+        => await context.Jobs.CountAsync();
+
+    public async Task<int> GetTotalApplicationsCountAsync()
+        => await context.JobApplications.CountAsync();
+
+    public async Task<int> GetNewUsersTodayCountAsync()
+        => await context.Users
+            .CountAsync(u => u.CreatedAt.Date == DateTime.UtcNow.Date);
+
+    public async Task<int> GetNewJobsTodayCountAsync()
+        => await context.Jobs
+            .CountAsync(j => j.CreatedAt.Date == DateTime.UtcNow.Date);
 }

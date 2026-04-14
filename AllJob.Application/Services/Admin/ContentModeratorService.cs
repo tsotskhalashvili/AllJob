@@ -63,4 +63,14 @@ public class ContentModeratorService(
         blogRepository.Delete(post);
         await unitOfWork.SaveChangesAsync();
     }
+
+    public async Task PublishBlogPostAsync(Guid id)
+    {
+        var post = await blogRepository.GetByIdAsync(id)
+            ?? throw new NotFoundException("BlogPost", id);
+
+        post.IsPublished = true;
+        blogRepository.Update(post);
+        await unitOfWork.SaveChangesAsync();
+    }
 }

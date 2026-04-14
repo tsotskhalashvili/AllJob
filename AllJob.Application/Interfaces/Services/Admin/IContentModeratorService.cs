@@ -8,11 +8,12 @@ public interface IContentModeratorService
 
     Task<IReadOnlyList<CompanyReviewResponseDto>> GetPendingReviewsAsync();
     Task ApproveReviewAsync(Guid reviewId);
+    Task<BlogPostResponseDto> CreateBlogPostAsync(CreateBlogPostDto dto, Guid userId);
+    Task UpdateBlogPostAsync(Guid id, CreateBlogPostDto dto, Guid userId);
+    Task PublishBlogPostAsync(Guid id);
+    Task DeleteBlogPostAsync(Guid id);
 
 
 
    
-    Task<BlogPostResponseDto> CreateBlogPostAsync(CreateBlogPostDto dto, Guid userId);
-    Task UpdateBlogPostAsync(Guid id, CreateBlogPostDto dto, Guid userId);
-    Task DeleteBlogPostAsync(Guid id);
 }

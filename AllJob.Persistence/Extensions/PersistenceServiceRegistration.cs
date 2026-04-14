@@ -2,6 +2,7 @@
 using AllJob.Application.Interfaces.Repositories;
 using AllJob.Application.Interfaces.Repositories.Applications;
 using AllJob.Application.Interfaces.Repositories.Auth;
+using AllJob.Application.Interfaces.Repositories.Blog;
 using AllJob.Application.Interfaces.Repositories.Candidate;
 using AllJob.Application.Interfaces.Repositories.Companies;
 using AllJob.Application.Interfaces.Repositories.Jobs;
@@ -12,6 +13,7 @@ using AllJob.Persistence.Context;
 using AllJob.Persistence.Interceptors;
 using AllJob.Persistence.Repositories.Applications;
 using AllJob.Persistence.Repositories.Auth;
+using AllJob.Persistence.Repositories.Blog;
 using AllJob.Persistence.Repositories.Candidate;
 using AllJob.Persistence.Repositories.Common;
 using AllJob.Persistence.Repositories.Companies;
@@ -65,6 +67,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IStatsRepository, StatsRepository>();
         services.AddScoped<ICompanyReviewRepository, CompanyReviewRepository>();
         services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
+        services.AddScoped<IBlogRepository, BlogRepository>();
 
 
 

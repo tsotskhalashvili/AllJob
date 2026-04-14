@@ -1,6 +1,7 @@
 ﻿using AllJob.Application.Interfaces.Services.Admin;
 using AllJob.Application.Interfaces.Services.Applications;
 using AllJob.Application.Interfaces.Services.Auth;
+using AllJob.Application.Interfaces.Services.Blog;
 using AllJob.Application.Interfaces.Services.Candidate;
 using AllJob.Application.Interfaces.Services.Company;
 using AllJob.Application.Interfaces.Services.Job;
@@ -11,6 +12,7 @@ using AllJob.Application.Interfaces.Services.Subscription;
 using AllJob.Application.Services.Admin;
 using AllJob.Application.Services.Applications;
 using AllJob.Application.Services.Auth;
+using AllJob.Application.Services.Blog;
 using AllJob.Application.Services.Candidate;
 using AllJob.Application.Services.Company;
 using AllJob.Application.Services.Job;
@@ -42,13 +44,20 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<ISavedJobService, SavedJobService>();
         services.AddScoped<IPlanService, PlanService>();
-        services.AddScoped<IAdminService, AdminService>();
+      
         services.AddScoped<IAddressService, AddressService>();
         services.AddScoped<IStatsService, StatsService>();
+        services.AddScoped<IBlogService, BlogService>();
         services.AddScoped<ICompanyReviewService, CompanyReviewService>();
         services.AddScoped<ICandidateExperienceService, CandidateExperienceService>();
         services.AddScoped<ICandidateEducationService, CandidateEducationService>();
         services.AddScoped<IManagementService, ManagementService>();
+        services.AddScoped<ICandidateManagerService, CandidateManagerService>();
+        services.AddScoped<IEmployerManagerService, EmployerManagerService>();
+        services.AddScoped<IContentModeratorService, ContentModeratorService>();
+        services.AddScoped<IFullAccessService, FullAccessService>();
+
+
 
 
         return services;

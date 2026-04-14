@@ -10,4 +10,7 @@ public interface IUserRepository : IGenericRepository<User>
     Task<IReadOnlyList<User>> GetAllAdminsAsync();
     Task<User?> GetAdminByIdAsync(Guid id);
 
+    Task<IReadOnlyList<User>> GetAllCandidatesAsync();
+    Task<IReadOnlyList<User>> GetAllEmployersAsync();
+
 }

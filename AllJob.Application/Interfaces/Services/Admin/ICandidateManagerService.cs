@@ -2,9 +2,9 @@
 
 namespace AllJob.Application.Interfaces.Services.Admin;
 
-public interface IAdminService
+public interface ICandidateManagerService
 {
     Task<IReadOnlyList<UserResponseDto>> GetAllUsersAsync();
     Task DeactivateUserAsync(Guid userId);
-    Task VerifyCompanyAsync(Guid companyId);
+    Task DeleteUserAsync(Guid userId);
 }

@@ -2,23 +2,15 @@
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories.Auth;
-using AllJob.Application.Interfaces.Repositories.Companies;
 using AllJob.Application.Interfaces.Services.Admin;
 using AllJob.Application.Mappings;
 
 namespace AllJob.Application.Services.Admin;
 
-public class AdminService(
+public class CandidateManagerService(
     IUserRepository userRepository,
-    ICompanyRepository companyRepository,
-    IUnitOfWork unitOfWork) : IAdminService
+    IUnitOfWork unitOfWork) : ICandidateManagerService
 {
-    public async Task<IReadOnlyList<UserResponseDto>> GetAllUsersAsync()
-    {
-        var users = await userRepository.GetAllAsync();
-        return users.Select(u => u.ToDto()).ToList();
-    }
-
     public async Task DeactivateUserAsync(Guid userId)
     {
         var user = await userRepository.GetByIdAsync(userId)
@@ -29,13 +21,17 @@ public class AdminService(
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task VerifyCompanyAsync(Guid companyId)
+    public async Task DeleteUserAsync(Guid userId)
     {
-        var company = await companyRepository.GetByIdAsync(companyId)
-            ?? throw new NotFoundException("Company", companyId);
+        var user = await userRepository.GetByIdAsync(userId)
+            ?? throw new NotFoundException("User", userId);
 
-        company.IsVerified = true;
-        companyRepository.Update(company);
+        userRepository.Delete(user);
         await unitOfWork.SaveChangesAsync();
+    }
+    public async Task<IReadOnlyList<UserResponseDto>> GetAllUsersAsync()
+    {
+        var users = await userRepository.GetAllCandidatesAsync(); 
+        return users.Select(u => u.ToDto()).ToList();
     }
 }

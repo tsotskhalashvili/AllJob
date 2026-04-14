@@ -25,6 +25,23 @@ namespace AllJob.Persistence.Repositories.Auth
                 .FirstOrDefaultAsync(u =>
                     u.Id == id &&
                     u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
+        public async Task<IReadOnlyList<User>> GetAllCandidatesAsync()
+    => await _dbSet
+        .AsNoTracking()
+        .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+        .Where(u => u.UserRoles
+            .Any(ur => ur.Role.Name == "Candidate"))
+        .ToListAsync();
+
+        public async Task<IReadOnlyList<User>> GetAllEmployersAsync()
+            => await _dbSet
+                .AsNoTracking()
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .Where(u => u.UserRoles
+                    .Any(ur => ur.Role.Name == "Employer"))
+                .ToListAsync();
         public async Task<User?> GetByEmailAsync(string email)
          => await _dbSet
              .FirstOrDefaultAsync(u => u.Email == email);

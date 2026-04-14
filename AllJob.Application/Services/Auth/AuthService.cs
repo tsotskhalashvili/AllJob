@@ -266,10 +266,11 @@ namespace AllJob.Application.Services.Auth
         private string GenerateAccessToken(User user, string role)
         {
             var claims = new[]
-            {
+             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("AdminRole", user.AdminRole?.ToString() ?? string.Empty)
             };
 
             var key = new SymmetricSecurityKey(

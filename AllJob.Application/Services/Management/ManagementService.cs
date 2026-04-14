@@ -33,10 +33,10 @@ public class ManagementService(
     private readonly string _baseUrl = appSettings.Value.BaseUrl;
     public async Task InviteAdminAsync(InviteAdminDto dto, Guid superAdminId)
     {
-        var existingUser = await userRepository.GetByEmailAsync(dto.Email);
-        
-        if(existingUser is not null)
-            throw new ConflictException($"Email '{dto.Email}' is already registered");
+        var existingInvite = await adminInviteRepository
+    .GetActiveInviteByEmailAsync(dto.Email);
+        if (existingInvite is not null)
+            throw new ConflictException($"Active invite already exists for '{dto.Email}'");
 
         var rawToken = Convert.ToBase64String(
             RandomNumberGenerator.GetBytes(64));

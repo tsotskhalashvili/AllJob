@@ -17,6 +17,13 @@ public class AdminInviteRepository(AppDbContext context) : IAdminInviteRepositor
         i.UsedAt == null &&
         i.ExpiresAt > DateTime.UtcNow);
 
+    public async Task<AdminInvite?> GetActiveInviteByEmailAsync(string email)
+    => await context.AdminInvites
+        .FirstOrDefaultAsync(i =>
+            i.Email == email &&
+            i.UsedAt == null &&
+            i.ExpiresAt > DateTime.UtcNow);
+
     public void Update(AdminInvite invite)
          => context.AdminInvites.Update(invite);
 }

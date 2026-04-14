@@ -42,8 +42,11 @@ namespace AllJob.API.Extensions;
         services.Configure<GoogleSettings>(
             configuration.GetSection("GoogleSettings"));
 
+        services.Configure<TokenHashSettings>(
+    configuration.GetSection("TokenHashSettings"));
 
-            var jwtSettings = configuration
+
+        var jwtSettings = configuration
                 .GetSection("JwtSettings")
                 .Get<JwtSettings>()!;
 

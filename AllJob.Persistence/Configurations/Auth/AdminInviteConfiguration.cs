@@ -20,10 +20,10 @@ public class AdminInviteConfiguration : BaseEntityConfiguration<AdminInvite>
             .IsRequired()
             .HasMaxLength(256);
 
-        builder.Property(x => x.Token)
-            .IsRequired();
+        builder.Property(x => x.TokenHash)
+        .IsRequired();
 
-        builder.HasIndex(x => x.Token)
+        builder.HasIndex(x => x.TokenHash)
             .IsUnique();
 
         builder.Property(x => x.Role)

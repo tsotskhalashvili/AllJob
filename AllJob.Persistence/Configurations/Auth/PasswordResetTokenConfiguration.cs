@@ -16,11 +16,10 @@ public class PasswordResetTokenConfiguration
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired(false);
+        builder.Property(x => x.TokenHash)
+    .IsRequired();
 
-        builder.Property(x => x.Token)
-            .IsRequired();
-
-        builder.HasIndex(x => x.Token)
+        builder.HasIndex(x => x.TokenHash)
             .IsUnique();
 
         builder.Property(x => x.ExpiresAt)

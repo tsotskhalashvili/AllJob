@@ -9,6 +9,22 @@ namespace AllJob.Persistence.Repositories.Auth
     public class UserRepository(AppDbContext context)
         : GenericRepository<User>(context), IUserRepository
     {
+        public async Task<IReadOnlyList<User>> GetAllAdminsAsync()
+     => await _dbSet
+         .AsNoTracking()
+         .Include(u => u.UserRoles)
+             .ThenInclude(ur => ur.Role)
+         .Where(u => u.UserRoles
+             .Any(ur => ur.Role.Name == "Admin"))
+         .ToListAsync();
+
+        public async Task<User?> GetAdminByIdAsync(Guid id)
+            => await _dbSet
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u =>
+                    u.Id == id &&
+                    u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
         public async Task<User?> GetByEmailAsync(string email)
          => await _dbSet
              .FirstOrDefaultAsync(u => u.Email == email);

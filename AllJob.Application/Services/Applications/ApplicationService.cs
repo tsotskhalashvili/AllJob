@@ -1,11 +1,14 @@
-﻿using AllJob.Application.DTOs.Application;
+﻿using AllJob.Application.Constants;
+using AllJob.Application.DTOs.Application;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories.Applications;
 using AllJob.Application.Interfaces.Repositories.Companies;
 using AllJob.Application.Interfaces.Repositories.Jobs;
 using AllJob.Application.Interfaces.Services.Applications;
+using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Mappings;
+using AllJob.Domain.Enums.Notifications;
 
 namespace AllJob.Application.Services.Applications;
 
@@ -13,13 +16,17 @@ public class ApplicationService(
     IApplicationRepository applicationRepository,
     IJobRepository jobRepository,
     ICompanyRepository companyRepository,
+    INotificationService notificationService,
     IUnitOfWork unitOfWork) : IApplicationService
 {
     public async Task<ApplicationResponseDto> CreateAsync(
-        CreateApplicationDto dto, Guid userId)
+     CreateApplicationDto dto, Guid userId)
     {
         var job = await jobRepository.GetByIdAsync(dto.JobId)
             ?? throw new NotFoundException("Job", dto.JobId);
+
+        var company = await companyRepository.GetByIdAsync(job.CompanyId)
+            ?? throw new NotFoundException("Company", job.CompanyId);
 
         var existing = await applicationRepository
             .GetCandidateApplicationsAsync(userId);
@@ -30,6 +37,14 @@ public class ApplicationService(
         var application = dto.ToEntity(userId);
         await applicationRepository.AddAsync(application);
         await unitOfWork.SaveChangesAsync();
+
+        await notificationService.CreateAsync(
+            userId: company.UserId,
+            title: NotificationMessages.ApplicationReceivedTitle,
+            message: NotificationMessages.ApplicationReceivedMessage,
+            type: NotificationType.ApplicationReceived,
+            actionUrl: $"/employer/applications/{application.Id}"
+        );
 
         var applications = await applicationRepository
             .GetCandidateApplicationsAsync(userId);
@@ -82,6 +97,14 @@ public class ApplicationService(
         application.Status = dto.Status;
         applicationRepository.Update(application);
         await unitOfWork.SaveChangesAsync();
+
+        await notificationService.CreateAsync(
+    userId: application.UserId,
+    title: NotificationMessages.ApplicationStatusChangedTitle,
+    message: NotificationMessages.ApplicationStatusChangedMessage,
+    type: NotificationType.ApplicationStatusChanged,
+    actionUrl: $"/candidate/applications/{applicationId}"
+);
 
         var applications = await applicationRepository
             .GetJobApplicationsAsync(application.JobId);

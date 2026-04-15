@@ -1,16 +1,23 @@
-﻿using AllJob.Application.DTOs.Common;
+﻿using AllJob.Application.Constants;
+using AllJob.Application.DTOs.Common;
 using AllJob.Application.DTOs.Company;
 using AllJob.Application.DTOs.Job;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
+using AllJob.Application.Interfaces.Repositories.Auth;
 using AllJob.Application.Interfaces.Repositories.Companies;
 using AllJob.Application.Interfaces.Services.Company;
+using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Mappings;
+using AllJob.Domain.Enums.Auth;
+using AllJob.Domain.Enums.Notifications;
 
 namespace AllJob.Application.Services.Company;
 
 public class CompanyService(
     ICompanyRepository companyRepository,
+    IUserRepository userRepository,
+    INotificationService notificationService,
     IUnitOfWork unitOfWork) : ICompanyService
 {
     public async Task<CompanyResponseDto> GetCompanyByIdAsync(Guid id)
@@ -28,6 +35,21 @@ public class CompanyService(
         var company = dto.ToEntity(userId);
         await companyRepository.AddAsync(company);
         await unitOfWork.SaveChangesAsync();
+
+        var admins = await userRepository.GetAllAdminsAsync();
+        foreach (var admin in admins.Where(a =>
+            a.AdminRole == AdminRole.EmployerManager ||
+            a.AdminRole == AdminRole.FullAccess))
+        {
+            await notificationService.CreateAsync(
+                userId: admin.Id,
+                title: NotificationMessages.NewCompanyPendingTitle,
+                message: NotificationMessages.NewCompanyPendingMessage,
+               type: NotificationType.NewCompanyPending,
+                actionUrl: $"/admin/companies"
+            );
+        }
+
         return company.ToDto();
     }
 

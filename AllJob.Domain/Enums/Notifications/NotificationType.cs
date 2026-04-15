@@ -6,9 +6,10 @@ public enum NotificationType
     ApplicationStatusChanged,
     NewJobMatch,
     JobExpired,
-    CompanyVerified,      
-    CompanyRejected,      
-    SkillApproved,        
-    ReviewApproved,       
-    PlanActivated
+    CompanyVerified,
+    CompanyRejected,
+    SkillApproved,
+    ReviewApproved,
+    PlanActivated,
+    NewCompanyPending
 }

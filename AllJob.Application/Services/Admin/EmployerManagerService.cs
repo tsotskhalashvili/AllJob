@@ -1,11 +1,14 @@
-﻿using AllJob.Application.DTOs.Admin;
+﻿using AllJob.Application.Constants;
+using AllJob.Application.DTOs.Admin;
 using AllJob.Application.DTOs.Company;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories.Auth;
 using AllJob.Application.Interfaces.Repositories.Companies;
 using AllJob.Application.Interfaces.Services.Admin;
+using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Mappings;
+using AllJob.Domain.Enums.Notifications;
 using AllJob.Domain.Enums.Subscriptions;
 
 namespace AllJob.Application.Services.Admin;
@@ -13,6 +16,7 @@ namespace AllJob.Application.Services.Admin;
 public class EmployerManagerService(
     IUserRepository userRepository,
     ICompanyRepository companyRepository,
+    INotificationService notificationService,
     IUnitOfWork unitOfWork) : IEmployerManagerService
 {
     public async Task<IReadOnlyList<UserResponseDto>> GetAllEmployersAsync()
@@ -55,6 +59,14 @@ public class EmployerManagerService(
         company.Tier = PlanTier.Standard;
         companyRepository.Update(company);
         await unitOfWork.SaveChangesAsync();
+
+        await notificationService.CreateAsync(
+            userId: company.UserId,
+            title: NotificationMessages.CompanyVerifiedTitle,
+            message: NotificationMessages.CompanyVerifiedMessage,
+            type: NotificationType.CompanyVerified,
+            actionUrl: $"/employer/company"
+        );
     }
 
     public async Task RejectCompanyAsync(Guid companyId)
@@ -62,9 +74,18 @@ public class EmployerManagerService(
         var company = await companyRepository.GetByIdAsync(companyId)
             ?? throw new NotFoundException("Company", companyId);
 
+       
         company.IsVerified = false;
         company.Tier = PlanTier.Free;
         companyRepository.Update(company);
         await unitOfWork.SaveChangesAsync();
+
+        await notificationService.CreateAsync(
+            userId: company.UserId,
+            title: NotificationMessages.CompanyRejectedTitle,
+            message: NotificationMessages.CompanyRejectedMessage,
+            type: NotificationType.CompanyRejected,
+            actionUrl: $"/employer/company"
+        );
     }
 }

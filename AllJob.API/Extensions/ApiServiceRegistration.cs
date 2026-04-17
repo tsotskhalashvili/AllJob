@@ -128,6 +128,9 @@ namespace AllJob.API.Extensions;
             options.RejectionStatusCode = 429;
         });
 
+        services.AddMemoryCache();
+        services.AddSingleton<ICacheService, CacheService>();
+
 
         return services;
         }

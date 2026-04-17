@@ -7,11 +7,20 @@ using AllJob.Domain.Entities.Shared;
 namespace AllJob.Application.Services.Shared;
 
 public class AddressService(
-    IGenericRepository<Address> addressRepository)  : IAddressService
+    IGenericRepository<Address> addressRepository,
+    ICacheService cacheService) : IAddressService
 {
+    private const string CacheKey = "addresses:all";
+
     public async Task<IReadOnlyList<AddressResponseDto>> GetAllAsync()
     {
-        var adrresses = await addressRepository.GetAllAsync();
-        return adrresses.Select(a => a.ToDto()).ToList();
+        var cached = cacheService.Get<IReadOnlyList<AddressResponseDto>>(CacheKey);
+        if (cached is not null) return cached;
+
+        var addresses = await addressRepository.GetAllAsync();
+        var result = addresses.Select(a => a.ToDto()).ToList();
+
+        cacheService.Set(CacheKey, result, TimeSpan.FromHours(24));
+        return result;
     }
 }

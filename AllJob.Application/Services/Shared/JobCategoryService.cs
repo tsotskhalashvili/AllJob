@@ -9,12 +9,21 @@ namespace AllJob.Application.Services.Shared;
 
 public class JobCategoryService(
     IGenericRepository<JobCategory> categoryRepository,
+    ICacheService cacheService,
     IUnitOfWork unitOfWork) : IJobCategoryService
 {
+    private const string CacheKey = "categories:all";
+
     public async Task<IReadOnlyList<JobCategoryResponseDto>> GetAllAsync()
     {
+        var cached = cacheService.Get<IReadOnlyList<JobCategoryResponseDto>>(CacheKey);
+        if (cached is not null) return cached;
+
         var categories = await categoryRepository.GetAllAsync();
-        return categories.Select(c => c.ToDto()).ToList();
+        var result = categories.Select(c => c.ToDto()).ToList();
+
+        cacheService.Set(CacheKey, result, TimeSpan.FromHours(1));
+        return result;
     }
 
     public async Task<JobCategoryResponseDto> CreateAsync(CreateJobCategoryDto dto)
@@ -22,6 +31,8 @@ public class JobCategoryService(
         var category = dto.ToEntity();
         await categoryRepository.AddAsync(category);
         await unitOfWork.SaveChangesAsync();
+
+        cacheService.Remove(CacheKey);
         return category.ToDto();
     }
 }

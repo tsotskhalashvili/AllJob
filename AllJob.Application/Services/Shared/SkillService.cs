@@ -9,12 +9,21 @@ namespace AllJob.Application.Services.Shared;
 
 public class SkillService(
     IGenericRepository<Skill> skillRepository,
+    ICacheService cacheService,
     IUnitOfWork unitOfWork) : ISkillService
 {
+    private const string CacheKey = "skills:all";
     public async Task<IReadOnlyList<SkillResponseDto>> GetAllAsync()
     {
+        var cached = cacheService.Get<IReadOnlyList<SkillResponseDto>>(CacheKey);
+        if (cached is not null) return cached;
+
         var skills = await skillRepository.GetAllAsync();
-        return skills.Select(s => s.ToDto()).ToList();
+        var result = skills.Select(s => s.ToDto()).ToList();
+
+        cacheService.Set(CacheKey, result, TimeSpan.FromHours(1));
+
+        return result;
     }
 
     public async Task<SkillResponseDto> CreateAsync(CreateSkillDto dto)
@@ -22,6 +31,8 @@ public class SkillService(
         var skill = dto.ToEntity();
         await skillRepository.AddAsync(skill);
         await unitOfWork.SaveChangesAsync();
+
+        cacheService.Remove(CacheKey);
         return skill.ToDto();
     }
 }

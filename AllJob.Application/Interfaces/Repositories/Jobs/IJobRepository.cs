@@ -11,5 +11,7 @@ public interface IJobRepository : IGenericRepository<Job>
     Task<Job?> GetJobWithDetailsAsync(Guid id);
 
     Task<IReadOnlyList<Job>> GetExpiredJobsAsync();
+    Task<IReadOnlyList<Job>> GetRecentJobsAsync(int hours);
+   
 
 }

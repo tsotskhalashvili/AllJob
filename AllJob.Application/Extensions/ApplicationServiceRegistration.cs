@@ -4,6 +4,7 @@ using AllJob.Application.Interfaces.Services.Auth;
 using AllJob.Application.Interfaces.Services.Blog;
 using AllJob.Application.Interfaces.Services.Candidate;
 using AllJob.Application.Interfaces.Services.Company;
+using AllJob.Application.Interfaces.Services.Hangfire;
 using AllJob.Application.Interfaces.Services.Job;
 using AllJob.Application.Interfaces.Services.Management;
 using AllJob.Application.Interfaces.Services.Notification;
@@ -15,6 +16,7 @@ using AllJob.Application.Services.Auth;
 using AllJob.Application.Services.Blog;
 using AllJob.Application.Services.Candidate;
 using AllJob.Application.Services.Company;
+using AllJob.Application.Services.Hangfire;
 using AllJob.Application.Services.Job;
 using AllJob.Application.Services.Management;
 using AllJob.Application.Services.Notification;
@@ -56,6 +58,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IEmployerManagerService, EmployerManagerService>();
         services.AddScoped<IContentModeratorService, ContentModeratorService>();
         services.AddScoped<IFullAccessService, FullAccessService>();
+        services.AddScoped<IHangfireJobService, HangfireJobService>();
+
 
 
 

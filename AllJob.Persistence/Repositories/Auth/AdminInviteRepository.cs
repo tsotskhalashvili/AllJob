@@ -26,4 +26,8 @@ public class AdminInviteRepository(AppDbContext context) : IAdminInviteRepositor
 
     public void Update(AdminInvite invite)
          => context.AdminInvites.Update(invite);
+    public async Task DeleteExpiredInvitesAsync()
+    => await context.AdminInvites
+        .Where(i => i.ExpiresAt < DateTime.UtcNow || i.UsedAt != null)
+        .ExecuteDeleteAsync();
 }

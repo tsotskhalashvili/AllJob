@@ -82,8 +82,18 @@ public class JobRepository(AppDbContext context)
 
     public async Task<IReadOnlyList<Job>> GetExpiredJobsAsync()
         => await _dbSet
-            .AsNoTracking()
+          
+            .Include(j => j.Company)
             .Where(j => j.ExpiresAt < DateTime.UtcNow
                 && j.Status != JobStatus.Expired)
             .ToListAsync();
+
+    public async Task<IReadOnlyList<Job>> GetRecentJobsAsync(int hours)
+      => await _dbSet
+          .AsNoTracking()
+          .Include(j => j.JobSkills)
+              .ThenInclude(js => js.Skill)
+          .Where(j => j.Status == JobStatus.Active
+              && j.CreatedAt > DateTime.UtcNow.AddHours(-hours))
+          .ToListAsync();
 }

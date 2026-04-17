@@ -33,4 +33,9 @@ public class PasswordResetTokenRepository(
 
     public void Update(PasswordResetToken token)
         => context.PasswordResetTokens.Update(token);
+
+    public async Task DeleteExpiredTokensAsync()
+    => await context.PasswordResetTokens
+        .Where(t => t.ExpiresAt < DateTime.UtcNow || t.IsUsed)
+        .ExecuteDeleteAsync();
 }

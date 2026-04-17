@@ -22,4 +22,15 @@ public static class NotificationMessages
     // Job
     public const string JobExpiredTitle = "Job Expired";
     public const string JobExpiredMessage = "Your job listing has expired";
+
+    // Subscription
+    public const string PlanActivatedTitle = "Plan Activated";
+    public const string PlanActivatedMessage = "Your subscription plan has been successfully activated";
+
+    public const string PlanExpiredTitle = "Subscription Expired";
+    public const string PlanExpiredMessage = "Your subscription plan has expired";
+
+    // Job Match
+    public const string NewJobMatchTitle = "New Job Match";
+    public const string NewJobMatchMessage = "A new job matching your skills is available";
 }

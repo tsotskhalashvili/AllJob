@@ -8,5 +8,6 @@ public interface IAdminInviteRepository
     Task<AdminInvite?> GetByTokenHashAsync(string tokenHash);
     Task<AdminInvite?> GetActiveInviteByEmailAsync(string email);
     void Update(AdminInvite invite);
+    Task DeleteExpiredInvitesAsync();
 
 }

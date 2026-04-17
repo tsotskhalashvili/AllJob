@@ -11,5 +11,6 @@ public enum NotificationType
     SkillApproved,
     ReviewApproved,
     PlanActivated,
-    NewCompanyPending
+    NewCompanyPending,
+    PlanExpired
 }

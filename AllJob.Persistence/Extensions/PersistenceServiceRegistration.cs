@@ -68,6 +68,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<ICompanyReviewRepository, CompanyReviewRepository>();
         services.AddScoped<IAdminInviteRepository, AdminInviteRepository>();
         services.AddScoped<IBlogRepository, BlogRepository>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>(); 
 
 
 

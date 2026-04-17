@@ -19,4 +19,9 @@ public class RefreshTokenRepository(AppDbContext context,
         => await _dbSet
             .FirstOrDefaultAsync(t =>
                 t.TokenHash == TokenHasher.Hash(token, _secret));
+
+    public async Task DeleteExpiredTokensAsync()
+    => await _dbSet
+        .Where(t => t.ExpiresAt < DateTime.UtcNow)
+        .ExecuteDeleteAsync();
 }

@@ -28,4 +28,13 @@ public class CandidateRepository(AppDbContext context)
             .Include(c => c.Experiences)
             .Include(c => c.Educations)
             .FirstOrDefaultAsync(c => c.UserId == userId);
+
+    public async Task<IReadOnlyList<CandidateProfile>> GetOpenToWorkAsync()
+     => await _dbSet
+         .AsNoTracking()
+         .Include(c => c.User)
+         .Include(c => c.Skills)
+             .ThenInclude(cs => cs.Skill)
+         .Where(c => c.IsOpenToWork)
+         .ToListAsync();
 }

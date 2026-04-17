@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddApiService(builder.Configuration);
+builder.Services.AddHangfireServices(builder.Configuration);
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -37,9 +38,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
+
 
 app.UseAuthorization();
+app.UseHangfireServices();
 
 app.MapControllers();
 

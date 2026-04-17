@@ -3,6 +3,7 @@ using AllJob.API.Services.Interfaces;
 using AllJob.Application.Interfaces.Services.Shared;
 using AllJob.Application.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -101,8 +102,33 @@ namespace AllJob.API.Extensions;
             });
 
 
+        services.AddRateLimiter(options =>
+        {
+            options.AddFixedWindowLimiter("login", opt =>
+            {
+                opt.PermitLimit = 5;
+                opt.Window = TimeSpan.FromMinutes(1);
+                opt.QueueLimit = 0;
+            });
+
+            options.AddFixedWindowLimiter("register", opt =>
+            {
+                opt.PermitLimit = 3;
+                opt.Window = TimeSpan.FromHours(1);
+                opt.QueueLimit = 0;
+            });
+
+            options.AddFixedWindowLimiter("forgotpassword", opt =>
+            {
+                opt.PermitLimit = 3;
+                opt.Window = TimeSpan.FromHours(1);
+                opt.QueueLimit = 0;
+            });
+
+            options.RejectionStatusCode = 429;
+        });
 
 
-            return services;
+        return services;
         }
     }

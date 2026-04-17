@@ -43,6 +43,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 app.UseHangfireServices();
+app.UseRateLimiter();
 
 app.MapControllers();
 

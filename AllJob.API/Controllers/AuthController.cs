@@ -5,6 +5,7 @@ using AllJob.Application.Interfaces.Services.Management;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace AllJob.API.Controllers;
@@ -25,6 +26,8 @@ public class AuthController(
     : BaseController
 {
     [HttpPost("register")]
+
+    [EnableRateLimiting("register")]
     public async Task<IActionResult> Register(RegisterDto dto)
     {
         await ValidateAsync(registerValidator, dto);
@@ -33,6 +36,7 @@ public class AuthController(
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("login")]
     public async Task<IActionResult> Login(LoginDto dto)
     {
         await ValidateAsync(loginValidator, dto);
@@ -64,6 +68,8 @@ public class AuthController(
     }
 
     [HttpPost("forgot-password")]
+    [EnableRateLimiting("forgotpassword")]
+
     public async Task<IActionResult> ForgotPassword(
         [FromBody] ForgotPasswordDto dto)
     {

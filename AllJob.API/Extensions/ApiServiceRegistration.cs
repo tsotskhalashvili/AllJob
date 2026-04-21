@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 using System.Text;
 
 namespace AllJob.API.Extensions;
@@ -130,6 +131,7 @@ namespace AllJob.API.Extensions;
 
         services.AddMemoryCache();
         services.AddSingleton<ICacheService, CacheService>();
+
 
 
         return services;

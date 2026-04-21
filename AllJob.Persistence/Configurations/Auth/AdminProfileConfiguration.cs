@@ -12,9 +12,9 @@ public class AdminProfileConfiguration : BaseEntityConfiguration<AdminProfile>
         base.Configure(builder);
 
         builder.HasOne(x => x.User)
-            .WithOne()
-            .HasForeignKey<AdminProfile>(x => x.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+     .WithOne(u => u.AdminProfile)
+     .HasForeignKey<AdminProfile>(x => x.UserId)
+     .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(x => x.FirstName)
             .IsRequired()

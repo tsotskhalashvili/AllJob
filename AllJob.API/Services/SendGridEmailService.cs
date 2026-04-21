@@ -52,4 +52,7 @@ public class SendGridEmailService(
 
     public async Task SendApplicationStatusChangedAsync(string toEmail, string jobTitle, string status)
         => await SendAsync(toEmail, _sendGrid.ApplicationStatusChangedTemplateId, new { jobTitle, status });
+
+    public async Task SendOtpAsync(string toEmail, string otp)
+      => await SendAsync(toEmail, _sendGrid.OtpTemplateId, new { otp });
 }

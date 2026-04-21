@@ -14,6 +14,9 @@ public class User : BaseEntity
     public bool IsExternalLogin { get; set; }
     public AdminRole? AdminRole { get; set; }
     public AdminProfile? AdminProfile { get; set; }
+    public bool TwoFactorEnabled { get; set; } = false;
+    public string? PendingOtpHash { get; set; }
+    public DateTime? OtpExpiresAt { get; set; }
 
     // Navigation Properties
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

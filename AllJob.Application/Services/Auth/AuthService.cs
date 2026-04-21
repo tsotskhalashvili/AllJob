@@ -29,7 +29,8 @@ namespace AllJob.Application.Services.Auth
             IUnitOfWork unitOfWork,
             IOptions<JwtSettings> jwtSettings,
             IOptions<GoogleSettings> googleSettings,
-            IOptions<TokenHashSettings> tokenHashSettings
+            IOptions<TokenHashSettings> tokenHashSettings,
+            ITwoFactorService twoFactorService
         ) : IAuthService
     {
         private readonly JwtSettings _jwt = jwtSettings.Value;
@@ -86,6 +87,18 @@ namespace AllJob.Application.Services.Auth
 
             var role = user.UserRoles.FirstOrDefault()?.Role
                 ?? throw new UnauthorizedException("User has no assigned role");
+
+           
+            if (role.Name == "Admin" || role.Name == "SuperAdmin")
+            {
+                await twoFactorService.SendOtpAsync(user.Id, user.Email);
+                return new AuthResponseDto(
+                    AccessToken: string.Empty,
+                    RefreshToken: string.Empty,
+                    ExpiresAt: DateTime.UtcNow,
+                    RequiresTwoFactor: true,
+                    UserId: user.Id);
+            }
 
             return await GenerateAuthResponseAsync(user, role.Name);
         }
@@ -151,6 +164,20 @@ namespace AllJob.Application.Services.Auth
             return await GenerateAuthResponseAsync(user, roleName);
         }
 
+        public async Task<AuthResponseDto> VerifyTwoFactorAsync(VerifyTwoFactorDto dto)
+        {
+            var user = await userRepository.GetByIdWithRolesAsync(dto.UserId)
+                ?? throw new NotFoundException("User", dto.UserId);
+
+            var isValid = await twoFactorService.VerifyOtpAsync(dto.UserId, dto.Otp);
+            if (!isValid)
+                throw new UnauthorizedException("Invalid or expired OTP");
+
+            var role = user.UserRoles.FirstOrDefault()?.Role
+                ?? throw new UnauthorizedException("User has no assigned role");
+
+            return await GenerateAuthResponseAsync(user, role.Name);
+        }
         public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenDto dto)
         {
             var refreshToken = await refreshTokenRepository
@@ -222,8 +249,7 @@ namespace AllJob.Application.Services.Auth
             await unitOfWork.SaveChangesAsync();
 
             await emailService.SendForgotPasswordAsync(user.Email, rawToken);
-        }
-
+        } 
         public async Task ResetPasswordAsync(ResetPasswordDto dto)
         {
             var resetToken = await passwordResetTokenRepository

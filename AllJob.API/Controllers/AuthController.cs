@@ -53,6 +53,14 @@ public class AuthController(
         return Ok(result);
     }
 
+    [HttpPost("2fa/verify")]
+    public async Task<IActionResult> VerifyTwoFactor(
+    [FromBody] VerifyTwoFactorDto dto)
+    {
+        var result = await authService.VerifyTwoFactorAsync(dto);
+        return Ok(result);
+    }
+
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken(RefreshTokenDto dto)
     {

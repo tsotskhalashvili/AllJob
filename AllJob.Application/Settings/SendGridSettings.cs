@@ -10,4 +10,5 @@ public class SendGridSettings
     public string AdminInviteTemplateId { get; set; } = string.Empty;
     public string ApplicationReceivedTemplateId { get; set; } = string.Empty;
     public string ApplicationStatusChangedTemplateId { get; set; } = string.Empty;
+    public string OtpTemplateId { get; set; } = string.Empty;
 }

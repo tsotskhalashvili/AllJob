@@ -13,4 +13,5 @@ public interface IAuthService
     Task ResetPasswordAsync(ResetPasswordDto dto);
     Task ChangePasswordAsync(ChangePasswordDto dto, Guid userId);
     Task<AuthResponseDto> GoogleLoginAsync(GoogleAuthDto dto);
+    Task<AuthResponseDto> VerifyTwoFactorAsync(VerifyTwoFactorDto dto);
 }

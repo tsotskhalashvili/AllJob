@@ -31,23 +31,25 @@ public class ManagementService(
 {
     private readonly string _secret = tokenHashSettings.Value.Secret;
     private readonly string _baseUrl = appSettings.Value.BaseUrl;
+
     public async Task InviteAdminAsync(InviteAdminDto dto, Guid superAdminId)
     {
         var existingInvite = await adminInviteRepository
-    .GetActiveInviteByEmailAsync(dto.Email);
+            .GetActiveInviteByEmailAsync(dto.Email);
         if (existingInvite is not null)
             throw new ConflictException($"Active invite already exists for '{dto.Email}'");
 
         var rawToken = Convert.ToBase64String(
             RandomNumberGenerator.GetBytes(64));
 
-        var invite = new AdminInvite { 
-        Id = Guid.NewGuid(),
-        Email = dto.Email,
-        TokenHash = TokenHasher.Hash(rawToken, _secret),
-        Role = dto.Role,
-        ExpiresAt = DateTime.UtcNow.AddDays(7),
-        CreatedByUserId =  superAdminId
+        var invite = new AdminInvite
+        {
+            Id = Guid.NewGuid(),
+            Email = dto.Email,
+            TokenHash = TokenHasher.Hash(rawToken, _secret),
+            Role = dto.Role,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            CreatedByUserId = superAdminId
         };
 
         await adminInviteRepository.AddAsync(invite);
@@ -57,14 +59,11 @@ public class ManagementService(
             dto.Email,
             rawToken,
             dto.Role.ToString());
-
-
     }
-     
+
     public async Task AcceptInviteAsync(AcceptInviteDto dto)
     {
         var tokenHash = TokenHasher.Hash(dto.Token, _secret);
-
 
         var invite = await adminInviteRepository
             .GetByTokenHashAsync(tokenHash)
@@ -74,21 +73,10 @@ public class ManagementService(
         var adminRole = roles.FirstOrDefault(r => r.Name == "Admin")
             ?? throw new NotFoundException("Role", "Admin");
 
-        var suffix = Random.Shared.Next(10, 99);
-        var corporateEmail = $"{dto.FirstName[0].ToString().ToLower()}" +
-            $".{dto.LastName.ToLower()}{suffix}@alljob.ge";
-
-        while (await userRepository.GetByEmailAsync(corporateEmail) is not null)
-        {
-            suffix = Random.Shared.Next(10, 99);
-            corporateEmail = $"{dto.FirstName[0].ToString().ToLower()}" +
-                $".{dto.LastName.ToLower()}{suffix}@alljob.ge";
-        }
-
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Email = corporateEmail,
+            Email = invite.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             IsActive = true,
             IsPasswordChangeRequired = false,
@@ -143,6 +131,7 @@ public class ManagementService(
         var admins = await userRepository.GetAllAdminsAsync();
         return admins.Select(u => u.ToAdminDto()).ToList();
     }
+
     public async Task<ManagementStatsDto> GetStatsAsync()
     {
         var totalUsers = await statsRepository.GetTotalUsersCountAsync();
@@ -163,7 +152,6 @@ public class ManagementService(
             NewJobsToday: newJobsToday
         );
     }
-
 
     public async Task UpdateAdminRoleAsync(Guid adminId, UpdateAdminRoleDto dto)
     {

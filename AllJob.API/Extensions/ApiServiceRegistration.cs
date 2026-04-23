@@ -46,6 +46,10 @@ namespace AllJob.API.Extensions;
 
         services.Configure<TokenHashSettings>(
     configuration.GetSection("TokenHashSettings"));
+        services.AddHttpClient();
+
+        services.Configure<GeminiSettings>(
+      configuration.GetSection("GeminiSettings"));
 
 
         var jwtSettings = configuration

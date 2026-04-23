@@ -60,7 +60,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IFullAccessService, FullAccessService>();
         services.AddScoped<IHangfireJobService, HangfireJobService>();
         services.AddScoped<ITwoFactorService, TwoFactorService>();
-
+        services.AddScoped<IJobMatchingService, JobMatchingService>();
+        services.AddScoped<ICvGenerationService, CvGenerationService>();
 
 
 

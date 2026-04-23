@@ -41,4 +41,17 @@ public class CloudinaryService (IOptions<CloudinarySettings> settings)
         await _cloudinary.DestroyAsync(deleteParms);
     }
 
+    public async Task<string> UploadPdfAsync(Stream pdfStream, string fileName)
+    {
+        var uploadParams = new RawUploadParams
+        {
+            File = new FileDescription(fileName, pdfStream),
+            Folder = "allJob/cvs",
+            PublicId = Path.GetFileNameWithoutExtension(fileName)
+
+        };
+
+        var result = await _cloudinary.UploadAsync(uploadParams);
+        return result.SecureUrl.ToString();
+    }
 }

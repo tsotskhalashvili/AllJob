@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Job;
 using AllJob.Application.Interfaces.Services.Job;
+using AllJob.Application.Services.Job;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,8 @@ namespace AllJob.API.Controllers;
 public class JobController(
     IJobService jobService,
     IValidator<CreateJobDto> createValidator,
-    IValidator<UpdateJobDto> updateValidator) 
+    IValidator<UpdateJobDto> updateValidator,
+    IJobMatchingService jobMatchingService) 
     : BaseController
 {
     [HttpGet]
@@ -77,6 +79,26 @@ public class JobController(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var result = await jobService.GetApplicationsCountAsync(id, userId);
         return Ok(result);
+    }
+
+    [HttpGet("recommended")]
+    [Authorize(Roles = "Candidate")]
+    public async Task<IActionResult> GetRecommended()
+    {
+        var userId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var result = await jobMatchingService.GetRecommendedJobsAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/match")]
+    [Authorize(Roles = "Candidate")]
+    public async Task<IActionResult> GetMatchScore(Guid id)
+    {
+        var userId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var score = await jobMatchingService.GetJobMatchScoreAsync(userId, id);
+        return Ok(new { score });
     }
 
 }

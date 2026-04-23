@@ -6,4 +6,6 @@ public interface IFileUploadService
 {
     Task<string> UploadImageAsync(IFormFile file);
     Task DeleteImageAsync(string publicId);
+    Task<string> UploadPdfAsync(Stream pdfStream, string fileName); 
+
 }

@@ -18,6 +18,12 @@ public class ExceptionResponseService : IExceptionResponseService
                 Message = isDevelopment
                     ? ex.Message : "Resource not found"
             },
+            BadRequestException => new ApiErrorResponse
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                  Message = isDevelopment
+                     ? ex.Message : "Bad request"
+            },
             ValidationException v => new ApiErrorResponse
             {
                 StatusCode = (int)HttpStatusCode.BadRequest,

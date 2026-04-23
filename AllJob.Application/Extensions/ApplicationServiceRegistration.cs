@@ -7,6 +7,7 @@ using AllJob.Application.Interfaces.Services.Company;
 using AllJob.Application.Interfaces.Services.Hangfire;
 using AllJob.Application.Interfaces.Services.Job;
 using AllJob.Application.Interfaces.Services.Management;
+using AllJob.Application.Interfaces.Services.Messaging;
 using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Interfaces.Services.Shared;
 using AllJob.Application.Interfaces.Services.Subscription;
@@ -19,6 +20,7 @@ using AllJob.Application.Services.Company;
 using AllJob.Application.Services.Hangfire;
 using AllJob.Application.Services.Job;
 using AllJob.Application.Services.Management;
+using AllJob.Application.Services.Messaging;
 using AllJob.Application.Services.Notification;
 using AllJob.Application.Services.Shared;
 using AllJob.Application.Services.Subscription;
@@ -62,6 +64,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<IJobMatchingService, JobMatchingService>();
         services.AddScoped<ICvGenerationService, CvGenerationService>();
+        services.AddScoped<IMessageService, MessageService>();
 
 
 

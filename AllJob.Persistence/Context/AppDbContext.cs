@@ -4,6 +4,7 @@ using AllJob.Domain.Entities.Blog;
 using AllJob.Domain.Entities.Candidate;
 using AllJob.Domain.Entities.Companies;
 using AllJob.Domain.Entities.Jobs;
+using AllJob.Domain.Entities.Messaging;
 using AllJob.Domain.Entities.Notifications;
 using AllJob.Domain.Entities.Shared;
 using AllJob.Domain.Entities.Subscriptions;
@@ -62,6 +63,10 @@ public class AppDbContext : DbContext
 
     // Shared
     public DbSet<Address> Addresses => Set<Address>();
+
+    //Messaging
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<Message> Messages => Set<Message>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

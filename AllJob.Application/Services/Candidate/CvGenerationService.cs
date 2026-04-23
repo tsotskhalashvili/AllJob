@@ -45,7 +45,7 @@ public class CvGenerationService(
             }
             catch
             {
-                // Photo download failed → CV without photo ✅
+                
             }
         }
 
@@ -123,7 +123,7 @@ public class CvGenerationService(
 
                 page.Content().Column(col =>
                 {
-                    // Header — Photo + Name
+                   
                     col.Item().Row(row =>
                     {
                         if (photoBytes != null)
@@ -147,7 +147,7 @@ public class CvGenerationService(
                             });
                     });
 
-                    // Summary
+                 
                     col.Item().PaddingTop(15).Text("Professional Summary")
                         .FontSize(14).Bold();
                     col.Item().Text(cvSummary);

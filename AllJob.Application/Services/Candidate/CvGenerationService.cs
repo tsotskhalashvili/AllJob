@@ -17,6 +17,7 @@ namespace AllJob.Application.Services.Candidate;
 public class CvGenerationService(
     ICandidateRepository candidateRepository,
     IFileUploadService fileUploadService,
+    IHttpClientFactory httpClientFactory,
     IOptions<GeminiSettings> geminSettings) : ICvGenerationService
 {
     private readonly GeminiSettings _settings = geminSettings.Value;
@@ -36,17 +37,15 @@ public class CvGenerationService(
         var cvSummary = await GenerateCvTextAsync(candidate);
 
         byte[]? photoBytes = null;
-        if (!string.IsNullOrEmpty(candidate.PhotoUrl))
+        if (!string.IsNullOrEmpty(candidate.PhotoUrl) &&
+            IsSafeCloudinaryUrl(candidate.PhotoUrl))
         {
             try
             {
-                using var httpClient = new HttpClient();
+                var httpClient = httpClientFactory.CreateClient(); 
                 photoBytes = await httpClient.GetByteArrayAsync(candidate.PhotoUrl);
             }
-            catch
-            {
-                
-            }
+            catch { }
         }
 
         var pdfBytes = GeneratePdf(candidate, cvSummary, photoBytes);
@@ -54,6 +53,15 @@ public class CvGenerationService(
         using var stream = new MemoryStream(pdfBytes);
         var fileName = $"cv_{candidate.FirstName}_{candidate.LastName}_{Guid.NewGuid()}.pdf";
         return await fileUploadService.UploadPdfAsync(stream, fileName);
+    }
+
+    private static bool IsSafeCloudinaryUrl(string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            return false;
+
+        return uri.Scheme == "https" &&
+               uri.Host.EndsWith("res.cloudinary.com");
     }
 
     private async Task<string> GenerateCvTextAsync(CandidateProfile candidate)
@@ -84,7 +92,7 @@ public class CvGenerationService(
             Do not include any markdown or formatting.
             """;
 
-        using var client = new HttpClient();
+        var client = httpClientFactory.CreateClient();
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_settings.Model}:generateContent?key={_settings.ApiKey}";
 
         var requestBody = new
@@ -123,7 +131,6 @@ public class CvGenerationService(
 
                 page.Content().Column(col =>
                 {
-                   
                     col.Item().Row(row =>
                     {
                         if (photoBytes != null)
@@ -147,12 +154,10 @@ public class CvGenerationService(
                             });
                     });
 
-                 
                     col.Item().PaddingTop(15).Text("Professional Summary")
                         .FontSize(14).Bold();
                     col.Item().Text(cvSummary);
 
-                    // Skills
                     if (candidate.Skills.Any())
                     {
                         col.Item().PaddingTop(15).Text("Skills")
@@ -161,7 +166,6 @@ public class CvGenerationService(
                             candidate.Skills.Select(s => s.Skill.Name)));
                     }
 
-                    // Experience
                     if (candidate.Experiences.Any())
                     {
                         col.Item().PaddingTop(15).Text("Experience")
@@ -175,7 +179,6 @@ public class CvGenerationService(
                         }
                     }
 
-                    // Education
                     if (candidate.Educations.Any())
                     {
                         col.Item().PaddingTop(15).Text("Education")

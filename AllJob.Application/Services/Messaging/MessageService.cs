@@ -1,6 +1,7 @@
 ﻿using AllJob.Application.DTOs.Messaging;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
+using AllJob.Application.Interfaces.Repositories.Auth;
 using AllJob.Application.Interfaces.Repositories.Messaging;
 using AllJob.Application.Interfaces.Services.Messaging;
 using AllJob.Application.Mappings;
@@ -10,6 +11,7 @@ namespace AllJob.Application.Services.Messaging;
 
 public class MessageService(
     IMessageRepository messageRepository,
+     IUserRepository userRepository,
     IUnitOfWork unitOfWork) : IMessageService
 {
     public async Task<MessageResponseDto> SendMessageAsync(Guid senderId, SendMessageDto dto)
@@ -49,8 +51,38 @@ public class MessageService(
     }
 
     public async Task<ConversationResponseDto> GetOrCreateConversationAsync(
-        Guid candidateId, Guid employerId)
+         Guid currentUserId, Guid otherUserId)
     {
+        var currentUser = await userRepository.GetByIdWithRolesAsync(currentUserId)
+            ?? throw new NotFoundException("User", currentUserId);
+
+        var otherUser = await userRepository.GetByIdWithRolesAsync(otherUserId)
+            ?? throw new NotFoundException("User", otherUserId);
+
+        var currentRole = currentUser.UserRoles.FirstOrDefault()?.Role.Name
+            ?? throw new UnauthorizedException("User has no role");
+
+        var otherRole = otherUser.UserRoles.FirstOrDefault()?.Role.Name
+            ?? throw new UnauthorizedException("User has no role");
+
+        Guid candidateId;
+        Guid employerId;
+
+        if (currentRole == "Candidate" && otherRole == "Employer")
+        {
+            candidateId = currentUserId;
+            employerId = otherUserId;
+        }
+        else if (currentRole == "Employer" && otherRole == "Candidate")
+        {
+            candidateId = otherUserId;
+            employerId = currentUserId;
+        }
+        else
+        {
+            throw new ForbiddenException("Conversation only allowed between Candidate and Employer");
+        }
+
         var conversation = await messageRepository
             .GetConversationAsync(candidateId, employerId);
 
@@ -70,4 +102,9 @@ public class MessageService(
 
         return conversation.ToDto();
     }
+
+
+  
+   public async Task<bool> IsParticipantAsync(Guid userId, Guid conversationId)
+    => await messageRepository.IsParticipantAsync(userId, conversationId);
 }

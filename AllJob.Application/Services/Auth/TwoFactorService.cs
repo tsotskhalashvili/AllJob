@@ -1,10 +1,13 @@
-﻿using AllJob.Application.Helpers;
+﻿using AllJob.Application.Exceptions;
+using AllJob.Application.Helpers;
 using AllJob.Application.Interfaces;
 using AllJob.Application.Interfaces.Repositories.Auth;
 using AllJob.Application.Interfaces.Services.Auth;
 using AllJob.Application.Interfaces.Services.Shared;
 using AllJob.Application.Settings;
 using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace AllJob.Application.Services.Auth;
 
@@ -18,11 +21,13 @@ public class TwoFactorService(
 
     public async Task SendOtpAsync(Guid userId, string email)
     {
-        var otp = Random.Shared.Next(100000, 999999).ToString();
+        var otp = RandomNumberGenerator.GetInt32(100000, 1000000).ToString(); 
         var otpHash = TokenHasher.Hash(otp, _secret);
 
+      
+
         var user = await userRepository.GetByIdAsync(userId)
-            ?? throw new Exception("User not found");
+            ?? throw new NotFoundException("User", userId);
 
         user.PendingOtpHash = otpHash;
         user.OtpExpiresAt = DateTime.UtcNow.AddMinutes(5);
@@ -35,7 +40,7 @@ public class TwoFactorService(
     public async Task<bool> VerifyOtpAsync(Guid userId, string otp)
     {
         var user = await userRepository.GetByIdAsync(userId)
-            ?? throw new Exception("User not found");
+            ?? throw new NotFoundException("User", userId);
 
         if (user.PendingOtpHash is null || user.OtpExpiresAt is null)
             return false;
@@ -44,7 +49,11 @@ public class TwoFactorService(
             return false;
 
         var otpHash = TokenHasher.Hash(otp, _secret);
-        if (user.PendingOtpHash != otpHash)
+
+        var pendingBytes = Encoding.UTF8.GetBytes(user.PendingOtpHash);
+        var otpBytes = Encoding.UTF8.GetBytes(otpHash);
+
+        if (!CryptographicOperations.FixedTimeEquals(pendingBytes, otpBytes)) 
             return false;
 
         user.PendingOtpHash = null;

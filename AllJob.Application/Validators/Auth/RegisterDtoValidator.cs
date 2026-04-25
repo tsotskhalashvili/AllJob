@@ -13,12 +13,7 @@ public class RegisterDtoValidator : AbstractValidator<RegisterDto>
             .Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
             .MaximumLength(256);
 
-        RuleFor(x => x.Password)
-          .NotEmpty()
-          .MinimumLength(8)
-          .MaximumLength(64)
-          .Matches(@"^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])")
-          .WithMessage("Password must contain uppercase, number and special character");
+        RuleFor(x => x.Password).ApplyPasswordRules();
 
         RuleFor(x => x.Role)
             .NotEmpty()

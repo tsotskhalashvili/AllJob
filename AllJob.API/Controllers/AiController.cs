@@ -2,6 +2,7 @@
 using AllJob.Application.Interfaces.Services.Job;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 namespace AllJob.API.Controllers;
@@ -13,6 +14,7 @@ public class AiController(
 {
     [HttpPost("generate-cv")]
     [Authorize(Roles = "Candidate")]
+    [EnableRateLimiting("cv-generation")]
     public async Task<IActionResult> GenerateCv()
     {
         var userId = Guid.Parse(

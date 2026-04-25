@@ -19,7 +19,7 @@ public class SkillController(
         return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateSkillDto dto)
     {

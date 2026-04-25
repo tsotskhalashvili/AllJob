@@ -8,6 +8,7 @@ using AllJob.Application.Interfaces.Repositories.Jobs;
 using AllJob.Application.Interfaces.Services.Applications;
 using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Mappings;
+using AllJob.Domain.Enums.Jobs;
 using AllJob.Domain.Enums.Notifications;
 
 namespace AllJob.Application.Services.Applications;
@@ -24,6 +25,15 @@ public class ApplicationService(
     {
         var job = await jobRepository.GetByIdAsync(dto.JobId)
             ?? throw new NotFoundException("Job", dto.JobId);
+
+   
+
+       
+        if (job.Status != JobStatus.Active)
+            throw new ConflictException("This job is no longer accepting applications");
+
+        if (job.ExpiresAt < DateTime.UtcNow)
+            throw new ConflictException("This job has expired");
 
         var company = await companyRepository.GetByIdAsync(job.CompanyId)
             ?? throw new NotFoundException("Company", job.CompanyId);

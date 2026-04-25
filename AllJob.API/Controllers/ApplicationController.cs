@@ -12,7 +12,8 @@ namespace AllJob.API.Controllers;
 [Authorize]
 public class ApplicationController(
     IApplicationService applicationService,
-    IValidator<CreateApplicationDto> validator) : BaseController
+    IValidator<CreateApplicationDto> validator,
+    IValidator<UpdateApplicationStatusDto> statusValidator) : BaseController
 {
     private Guid UserId => Guid.Parse(
         User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -46,8 +47,9 @@ public class ApplicationController(
     [Authorize(Roles = "Employer")]
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateStatus(
-        Guid id, [FromBody] UpdateApplicationStatusDto dto)
+     Guid id, [FromBody] UpdateApplicationStatusDto dto)
     {
+        await ValidateAsync(statusValidator, dto);
         var result = await applicationService
             .UpdateStatusAsync(id, dto, UserId);
         return Ok(result);

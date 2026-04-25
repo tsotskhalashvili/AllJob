@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.Constants;
 using AllJob.Application.DTOs.Admin;
+using AllJob.Application.DTOs.Common;
 using AllJob.Application.DTOs.Company;
 using AllJob.Application.Exceptions;
 using AllJob.Application.Interfaces;
@@ -19,12 +20,12 @@ public class EmployerManagerService(
     INotificationService notificationService,
     IUnitOfWork unitOfWork) : IEmployerManagerService
 {
-    public async Task<IReadOnlyList<UserResponseDto>> GetAllEmployersAsync()
+    public async Task<PagedResponseDto<UserResponseDto>> GetAllEmployersAsync(int page, int pageSize)
     {
-        var employers = await userRepository.GetAllEmployersAsync();
-        return employers.Select(u => u.ToDto()).ToList();
+        var result = await userRepository.GetAllEmployersAsync(page, pageSize);
+        var items = result.Items.Select(u => u.ToDto()).ToList();
+        return new PagedResponseDto<UserResponseDto>(items, result.TotalCount, page, pageSize);
     }
-
     public async Task DeactivateEmployerAsync(Guid userId)
     {
         var user = await userRepository.GetByIdAsync(userId)
@@ -37,8 +38,12 @@ public class EmployerManagerService(
 
     public async Task DeleteEmployerAsync(Guid userId)
     {
-        var user = await userRepository.GetByIdAsync(userId)
+        var user = await userRepository.GetByIdWithRolesAsync(userId)
             ?? throw new NotFoundException("User", userId);
+
+        var role = user.UserRoles.FirstOrDefault()?.Role.Name;
+        if (role is "Admin" or "SuperAdmin")
+            throw new ForbiddenException("Cannot delete admin users");
 
         userRepository.Delete(user);
         await unitOfWork.SaveChangesAsync();

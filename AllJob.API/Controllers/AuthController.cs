@@ -54,8 +54,9 @@ public class AuthController(
     }
 
     [HttpPost("2fa/verify")]
+    [EnableRateLimiting("twofa")]
     public async Task<IActionResult> VerifyTwoFactor(
-    [FromBody] VerifyTwoFactorDto dto)
+      [FromBody] VerifyTwoFactorDto dto)
     {
         var result = await authService.VerifyTwoFactorAsync(dto);
         return Ok(result);

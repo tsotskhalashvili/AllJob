@@ -19,7 +19,7 @@ public class JobCategoryController(
         return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateJobCategoryDto dto)
     {

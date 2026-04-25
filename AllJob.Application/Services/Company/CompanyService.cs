@@ -30,14 +30,14 @@ public class CompanyService(
     }
 
     public async Task<CompanyResponseDto> CreateCompanyAsync(
-        CreateCompanyDto dto, Guid userId)
+      CreateCompanyDto dto, Guid userId)
     {
         var company = dto.ToEntity(userId);
         await companyRepository.AddAsync(company);
         await unitOfWork.SaveChangesAsync();
 
-        var admins = await userRepository.GetAllAdminsAsync();
-        foreach (var admin in admins.Where(a =>
+        var admins = await userRepository.GetAllAdminsAsync(1, int.MaxValue);
+        foreach (var admin in admins.Items.Where(a =>
             a.AdminRole == AdminRole.EmployerManager ||
             a.AdminRole == AdminRole.FullAccess))
         {
@@ -45,14 +45,13 @@ public class CompanyService(
                 userId: admin.Id,
                 title: NotificationMessages.NewCompanyPendingTitle,
                 message: NotificationMessages.NewCompanyPendingMessage,
-               type: NotificationType.NewCompanyPending,
+                type: NotificationType.NewCompanyPending,
                 actionUrl: $"/admin/companies"
             );
         }
 
         return company.ToDto();
     }
-
     public async Task UpdateCompanyAsync(
         Guid id, UpdateCompanyDto dto, Guid userId)
     {

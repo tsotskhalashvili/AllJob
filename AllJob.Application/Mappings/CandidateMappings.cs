@@ -69,6 +69,8 @@ public static class CandidateMappings
         EndDate = dto.EndDate
     };
 
+    
+
     public static CandidateProfile ToEntity(
         this CreateCandidateProfileDto dto, Guid userId)
         => new()

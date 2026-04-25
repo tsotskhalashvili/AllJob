@@ -10,11 +10,6 @@ public class ChangePasswordDtoValidator : AbstractValidator<ChangePasswordDto>
         RuleFor(x => x.CurrentPassword)
             .NotEmpty();
 
-        RuleFor(x => x.NewPassword)
-            .NotEmpty()
-            .MinimumLength(8)
-            .MaximumLength(64)
-            .Matches(@"^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])")
-            .WithMessage("Password must contain uppercase, number and special character");
+        RuleFor(x => x.NewPassword).ApplyPasswordRules();
     }
 }

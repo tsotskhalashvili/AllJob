@@ -29,33 +29,23 @@ public class HangfireJobService(
         await adminInviteRepository.DeleteExpiredInvitesAsync();
     }
 
-
     public async Task ExpireJobsAsync()
     {
         var jobs = await jobRepository.GetExpiredJobsAsync();
 
         foreach (var job in jobs)
         {
-            try
-            {
-                job.Status = JobStatus.Expired;
-                jobRepository.Update(job);
-                await unitOfWork.SaveChangesAsync();
+            job.Status = JobStatus.Expired;
+            jobRepository.Update(job);
+            await unitOfWork.SaveChangesAsync();
 
-                await notificationService.CreateAsync(
-                    userId: job.Company.UserId,
-                    title: NotificationMessages.JobExpiredTitle,
-                    message: NotificationMessages.JobExpiredMessage,
-                    type: NotificationType.JobExpired,
-                    actionUrl: $"/employer/jobs/{job.Id}"
-                    );
-            }
-            catch 
-            {
-
-                throw;
-            }
-
+            await notificationService.CreateAsync(
+                userId: job.Company.UserId,
+                title: NotificationMessages.JobExpiredTitle,
+                message: NotificationMessages.JobExpiredMessage,
+                type: NotificationType.JobExpired,
+                actionUrl: $"/employer/jobs/{job.Id}"
+            );
         }
     }
 
@@ -66,37 +56,34 @@ public class HangfireJobService(
 
         foreach (var subscription in subscriptions)
         {
-            try
-            {
-                subscription.IsActive = false;
-                subscription.Company.Tier = PlanTier.Free;
-                subscriptionRepository.Update(subscription);
-                await unitOfWork.SaveChangesAsync();
+            subscription.IsActive = false;
+            subscription.Company.Tier = PlanTier.Free;
+            subscriptionRepository.Update(subscription);
+            await unitOfWork.SaveChangesAsync();
 
-                await notificationService.CreateAsync(
-                    userId: subscription.Company.UserId,
-                    title: NotificationMessages.PlanExpiredTitle,
-                    message: NotificationMessages.PlanExpiredMessage,
-                    type: NotificationType.PlanExpired,
-                    actionUrl: "/employer/subscription"
-                );
-            }
-            catch
-            {  
-                throw;
-            }
+            await notificationService.CreateAsync(
+                userId: subscription.Company.UserId,
+                title: NotificationMessages.PlanExpiredTitle,
+                message: NotificationMessages.PlanExpiredMessage,
+                type: NotificationType.PlanExpired,
+                actionUrl: "/employer/subscription"
+            );
         }
-
     }
-
-
-
 
     public async Task NotifyNewJobsAsync()
     {
+        
         var recentJobs = await jobRepository.GetRecentJobsAsync(6);
 
         if (!recentJobs.Any()) return;
+
+       
+        var unnotifiedJobs = recentJobs
+            .Where(j => j.LastNotifiedAt == null)
+            .ToList();
+
+        if (!unnotifiedJobs.Any()) return;
 
         var candidates = await candidateRepository.GetOpenToWorkAsync();
 
@@ -106,7 +93,7 @@ public class HangfireJobService(
                 .Select(cs => cs.SkillId)
                 .ToHashSet();
 
-            foreach (var job in recentJobs)
+            foreach (var job in unnotifiedJobs)
             {
                 var jobSkillIds = job.JobSkills
                     .Select(js => js.SkillId)
@@ -127,5 +114,14 @@ public class HangfireJobService(
                 );
             }
         }
+
+        
+        foreach (var job in unnotifiedJobs)
+        {
+            job.LastNotifiedAt = DateTime.UtcNow;
+            jobRepository.Update(job);
+        }
+
+        await unitOfWork.SaveChangesAsync();
     }
 }

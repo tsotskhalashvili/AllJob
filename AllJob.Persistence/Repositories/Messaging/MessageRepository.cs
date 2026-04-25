@@ -36,4 +36,9 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     public async Task<Conversation?> GetConversationByIdAsync(Guid conversationId)
     => await context.Conversations
         .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+    public async Task<bool> IsParticipantAsync(Guid userId, Guid conversationId)
+     => await context.Conversations
+       .AnyAsync(c => c.Id == conversationId &&
+        (c.CandidateId == userId || c.EmployerId == userId));
 }

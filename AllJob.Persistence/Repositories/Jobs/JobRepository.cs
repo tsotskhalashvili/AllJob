@@ -26,7 +26,7 @@ public class JobRepository(AppDbContext context)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(filter.Title))
-            query = query.Where(j => j.Title.Contains(filter.Title));
+            query = query.Where(j => j.Title.StartsWith(filter.Title)); 
 
         if (filter.CategoryId.HasValue)
             query = query.Where(j => j.CategoryId == filter.CategoryId);

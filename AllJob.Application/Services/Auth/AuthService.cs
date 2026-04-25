@@ -88,16 +88,17 @@ namespace AllJob.Application.Services.Auth
             var role = user.UserRoles.FirstOrDefault()?.Role
                 ?? throw new UnauthorizedException("User has no assigned role");
 
-           
+
             if (role.Name == "Admin" || role.Name == "SuperAdmin")
             {
                 await twoFactorService.SendOtpAsync(user.Id, user.Email);
+                var challengeToken = GenerateChallengeToken(user.Id);
                 return new AuthResponseDto(
                     AccessToken: string.Empty,
                     RefreshToken: string.Empty,
                     ExpiresAt: DateTime.UtcNow,
                     RequiresTwoFactor: true,
-                    UserId: user.Id);
+                    ChallengeToken: challengeToken);
             }
 
             return await GenerateAuthResponseAsync(user, role.Name);
@@ -111,6 +112,9 @@ namespace AllJob.Application.Services.Auth
                 {
                     Audience = new[] { _google.ClientId }
                 });
+
+            if (dto.Role is "Admin" or "SuperAdmin")
+                throw new ForbiddenException("Admin registration via Google is not allowed");
 
             var user = await userRepository.GetByEmailAsync(payload.Email);
             if (user is null)
@@ -161,15 +165,20 @@ namespace AllJob.Application.Services.Auth
                 .FirstOrDefault()?.Role.Name
                 ?? throw new UnauthorizedException("User has no assigned role");
 
+            if (roleName is "Admin" or "SuperAdmin")
+                throw new ForbiddenException("Admin login via Google is not allowed");
+
             return await GenerateAuthResponseAsync(user, roleName);
         }
 
         public async Task<AuthResponseDto> VerifyTwoFactorAsync(VerifyTwoFactorDto dto)
         {
-            var user = await userRepository.GetByIdWithRolesAsync(dto.UserId)
-                ?? throw new NotFoundException("User", dto.UserId);
+            var userId = ValidateChallengeToken(dto.ChallengeToken);
 
-            var isValid = await twoFactorService.VerifyOtpAsync(dto.UserId, dto.Otp);
+            var user = await userRepository.GetByIdWithRolesAsync(userId)
+                ?? throw new NotFoundException("User", userId);
+
+            var isValid = await twoFactorService.VerifyOtpAsync(userId, dto.Otp);
             if (!isValid)
                 throw new UnauthorizedException("Invalid or expired OTP");
 
@@ -197,12 +206,22 @@ namespace AllJob.Application.Services.Auth
             var role = user.UserRoles.FirstOrDefault()?.Role
                 ?? throw new UnauthorizedException("User has no assigned role");
 
-            refreshToken.RevokedAt = DateTime.UtcNow;
-            refreshTokenRepository.Update(refreshToken);
+            await unitOfWork.BeginTransactionAsync();
+            try
+            {
+                refreshToken.RevokedAt = DateTime.UtcNow;
+                refreshTokenRepository.Update(refreshToken);
 
-            return await GenerateAuthResponseAsync(user, role.Name);
+                var response = await GenerateAuthResponseAsync(user, role.Name);
+                await unitOfWork.CommitAsync();
+                return response;
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
         }
-
         public async Task RevokeTokenAsync(RefreshTokenDto dto)
         {
             var refreshToken = await refreshTokenRepository
@@ -270,6 +289,8 @@ namespace AllJob.Application.Services.Auth
             resetToken.IsUsed = true;
             passwordResetTokenRepository.Update(resetToken);
 
+            await refreshTokenRepository.RevokeAllByUserIdAsync(user.Id);
+
             await unitOfWork.SaveChangesAsync();
         }
 
@@ -281,8 +302,14 @@ namespace AllJob.Application.Services.Auth
             if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
                 throw new UnauthorizedException("Current password is incorrect");
 
+            if (BCrypt.Net.BCrypt.Verify(dto.NewPassword, user.PasswordHash))
+                throw new ConflictException("New password must be different from current password");
+
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             userRepository.Update(user);
+
+            await refreshTokenRepository.RevokeAllByUserIdAsync(user.Id);
+
             await unitOfWork.SaveChangesAsync();
         }
 
@@ -316,6 +343,67 @@ namespace AllJob.Application.Services.Auth
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private string GenerateChallengeToken(Guid userId)
+        {
+            var claims = new[]
+            {
+        new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+        new Claim("purpose", "2fa-challenge")
+    };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_jwt.SecretKey));
+
+            var credentials = new SigningCredentials(
+                key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _jwt.Issuer,
+                audience: _jwt.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(5),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private Guid ValidateChallengeToken(string challengeToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_jwt.SecretKey));
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _jwt.Issuer,
+                ValidAudience = _jwt.Audience,
+                IssuerSigningKey = key
+            };
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(
+                    challengeToken, validationParameters, out _);
+
+                var purpose = principal.FindFirst("purpose")?.Value;
+                if (purpose != "2fa-challenge")
+                    throw new UnauthorizedException("Invalid challenge token");
+
+                var userIdString = principal
+                    .FindFirst(ClaimTypes.NameIdentifier)?.Value
+                    ?? throw new UnauthorizedException("Invalid challenge token");
+
+                return Guid.Parse(userIdString);
+            }
+            catch (SecurityTokenException)
+            {
+                throw new UnauthorizedException("Invalid or expired challenge token");
+            }
+        }
         private static string GenerateRefreshToken()
         {
             var randomBytes = new byte[64];

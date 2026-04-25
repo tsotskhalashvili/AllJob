@@ -10,4 +10,5 @@ public interface IMessageRepository
     Task<IReadOnlyList<Message>> GetMessagesAsync(Guid conversationId);
     Task<IReadOnlyList<Conversation>> GetUserConversationsAsync(Guid userId);
     Task<Conversation?> GetConversationByIdAsync(Guid conversationId);
+    Task<bool> IsParticipantAsync(Guid userId, Guid conversationId);
 }

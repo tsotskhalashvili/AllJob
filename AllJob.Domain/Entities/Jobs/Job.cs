@@ -15,6 +15,7 @@ public class Job : BaseEntity
     public string Description { get; set; } = string.Empty;
     public decimal? SalaryMin { get; set; }
     public decimal? SalaryMax { get; set; }
+    public DateTime? LastNotifiedAt { get; set; }
     public WorkType WorkType { get; set; }
     public JobStatus Status { get; set; }
     public ExperienceLevel? ExperienceLevel { get; set; }

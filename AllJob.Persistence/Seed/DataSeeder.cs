@@ -22,26 +22,38 @@ public static class DataSeeder
         var adminSettings = scope.ServiceProvider
             .GetRequiredService<IOptions<AdminSettings>>().Value;
 
-        await SeedRolesAsync(context);
-        await context.SaveChangesAsync();
+        await using var transaction = await context.Database
+            .BeginTransactionAsync();
+        try
+        {
+            await SeedRolesAsync(context);
+            await context.SaveChangesAsync();
 
-        await SeedSuperAdminAsync(context, adminSettings);
-        await context.SaveChangesAsync();
+            await SeedSuperAdminAsync(context, adminSettings);
+            await context.SaveChangesAsync();
 
-        await SeedAddressesAsync(context);
-        await context.SaveChangesAsync();
+            await SeedAddressesAsync(context);
+            await context.SaveChangesAsync();
 
-        await SeedSkillsAsync(context);
-        await context.SaveChangesAsync();
+            await SeedSkillsAsync(context);
+            await context.SaveChangesAsync();
 
-        await SeedJobCategoriesAsync(context);
-        await context.SaveChangesAsync();
+            await SeedJobCategoriesAsync(context);
+            await context.SaveChangesAsync();
 
-        await SeedPlansAsync(context);
-        await context.SaveChangesAsync();
+            await SeedPlansAsync(context);
+            await context.SaveChangesAsync();
 
-        await SeedBlogCategoriesAsync(context);
-        await context.SaveChangesAsync();
+            await SeedBlogCategoriesAsync(context);
+            await context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     private static async Task SeedRolesAsync(AppDbContext context)

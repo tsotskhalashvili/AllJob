@@ -129,6 +129,18 @@ namespace AllJob.API.Extensions;
                 opt.Window = TimeSpan.FromHours(1);
                 opt.QueueLimit = 0;
             });
+            options.AddFixedWindowLimiter("twofa", opt =>
+            {
+                opt.PermitLimit = 5;
+                opt.Window = TimeSpan.FromMinutes(15);
+                opt.QueueLimit = 0;
+            });
+            options.AddFixedWindowLimiter("cv-generation", opt =>
+            {
+                opt.PermitLimit = 3;
+                opt.Window = TimeSpan.FromHours(1);
+                opt.QueueLimit = 0;
+            });
 
             options.RejectionStatusCode = 429;
         });

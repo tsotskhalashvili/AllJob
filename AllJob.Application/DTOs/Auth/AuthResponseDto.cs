@@ -5,5 +5,5 @@ public record AuthResponseDto(
     string RefreshToken,
     DateTime ExpiresAt,
     bool RequiresTwoFactor = false,
-    Guid? UserId = null
+    string? ChallengeToken = null
 );

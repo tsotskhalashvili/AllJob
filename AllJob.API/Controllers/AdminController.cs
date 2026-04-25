@@ -16,11 +16,12 @@ public class AdminController(
 {
     #region CandidateManager
     [HttpGet("candidates")]
-    public async Task<IActionResult> GetAllCandidates()
+    public async Task<IActionResult> GetAllCandidates(
+      [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         if (!HasAccess(AdminRole.CandidateManager, AdminRole.FullAccess))
             return Forbid();
-        var result = await candidateManagerService.GetAllUsersAsync();
+        var result = await candidateManagerService.GetAllUsersAsync(page, pageSize);
         return Ok(result);
     }
 
@@ -45,11 +46,12 @@ public class AdminController(
 
     #region EmployerManager
     [HttpGet("employers")]
-    public async Task<IActionResult> GetAllEmployers()
+    public async Task<IActionResult> GetAllEmployers(
+    [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
     {
         if (!HasAccess(AdminRole.EmployerManager, AdminRole.FullAccess))
             return Forbid();
-        var result = await employerManagerService.GetAllEmployersAsync();
+        var result = await employerManagerService.GetAllEmployersAsync(page, pageSize);
         return Ok(result);
     }
 

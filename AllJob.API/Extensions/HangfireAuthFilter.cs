@@ -6,11 +6,8 @@ public class HangfireAuthFilter : IDashboardAuthorizationFilter
     {
         var httpContext = context.GetHttpContext();
 
-     
-        if (httpContext.RequestServices
-            .GetRequiredService<IWebHostEnvironment>()
-            .IsDevelopment())
-            return true;
+        if (!httpContext.User.Identity?.IsAuthenticated ?? true)
+            return false;
 
         return httpContext.User.IsInRole("SuperAdmin");
     }

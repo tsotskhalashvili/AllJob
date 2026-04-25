@@ -25,6 +25,11 @@ public class MessageController(IMessageService messageService) : BaseController
     {
         var userId = Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var isParticipant = await messageService.IsParticipantAsync(userId, conversationId);
+        if (!isParticipant)
+            return Forbid();
+
         var result = await messageService.GetMessagesAsync(conversationId, userId);
         return Ok(result);
     }
@@ -33,8 +38,11 @@ public class MessageController(IMessageService messageService) : BaseController
     public async Task<IActionResult> GetOrCreateConversation(
         [FromBody] CreateConversationDto dto)
     {
+        var currentUserId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
         var result = await messageService
-            .GetOrCreateConversationAsync(dto.CandidateId, dto.EmployerId);
+            .GetOrCreateConversationAsync(currentUserId, dto.OtherUserId);
         return Ok(result);
     }
 }

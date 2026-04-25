@@ -25,6 +25,13 @@ public class ChatHub(IMessageService messageService) : Hub
 
     public async Task JoinConversation(Guid conversationId)
     {
+        var userId = Guid.Parse(
+            Context.User!.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var isParticipant = await messageService.IsParticipantAsync(userId, conversationId);
+        if (!isParticipant)
+            throw new HubException("Access denied");
+
         await Groups.AddToGroupAsync(
             Context.ConnectionId,
             conversationId.ToString());

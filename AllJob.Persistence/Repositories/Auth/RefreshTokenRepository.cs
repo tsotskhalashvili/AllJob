@@ -24,4 +24,10 @@ public class RefreshTokenRepository(AppDbContext context,
     => await _dbSet
         .Where(t => t.ExpiresAt < DateTime.UtcNow)
         .ExecuteDeleteAsync();
+
+    public async Task RevokeAllByUserIdAsync(Guid userId)
+    => await _dbSet
+        .Where(t => t.UserId == userId && t.RevokedAt == null)
+        .ExecuteUpdateAsync(s => s.SetProperty(
+            t => t.RevokedAt, DateTime.UtcNow));
 }

@@ -11,6 +11,7 @@ using AllJob.Application.Interfaces.Services.Shared;
 using AllJob.Application.Mappings;
 using AllJob.Application.Settings;
 using AllJob.Domain.Entities.Auth;
+using AllJob.Domain.Enums.Auth;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 
@@ -69,6 +70,11 @@ public class ManagementService(
             .GetByTokenHashAsync(tokenHash)
             ?? throw new NotFoundException("Invite", dto.Token);
 
+       
+        var existingUser = await userRepository.GetByEmailAsync(invite.Email);
+        if (existingUser is not null)
+            throw new ConflictException($"Email '{invite.Email}' is already registered");
+
         var roles = await roleRepository.GetAllAsync();
         var adminRole = roles.FirstOrDefault(r => r.Name == "Admin")
             ?? throw new NotFoundException("Role", "Admin");
@@ -115,7 +121,6 @@ public class ManagementService(
             throw;
         }
     }
-
     public async Task DeleteAdminAsync(Guid adminId)
     {
         var admin = await userRepository.GetAdminByIdAsync(adminId)
@@ -128,8 +133,8 @@ public class ManagementService(
 
     public async Task<IReadOnlyList<AdminResponseDto>> GetAllAdminsAsync()
     {
-        var admins = await userRepository.GetAllAdminsAsync();
-        return admins.Select(u => u.ToAdminDto()).ToList();
+        var admins = await userRepository.GetAllAdminsAsync(1, int.MaxValue);
+        return admins.Items.Select(u => u.ToAdminDto()).ToList();
     }
 
     public async Task<ManagementStatsDto> GetStatsAsync()

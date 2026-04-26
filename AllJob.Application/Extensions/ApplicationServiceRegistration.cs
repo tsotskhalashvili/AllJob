@@ -65,6 +65,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IJobMatchingService, JobMatchingService>();
         services.AddScoped<ICvGenerationService, CvGenerationService>();
         services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IPaymentService, BogPaymentService>();
 
 
 

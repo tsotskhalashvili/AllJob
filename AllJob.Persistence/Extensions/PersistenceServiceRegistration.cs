@@ -72,6 +72,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IBlogRepository, BlogRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 
 

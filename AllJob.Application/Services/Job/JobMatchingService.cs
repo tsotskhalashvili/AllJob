@@ -17,13 +17,14 @@ public class JobMatchingService(
     ICandidateRepository candidateRepository,
     IJobRepository jobRepository,
     ICacheService cacheService,
+    IHttpClientFactory httpClientFactory,
     IOptions<GeminiSettings> geminiSettings) : IJobMatchingService
 {
     private readonly GeminiSettings _settings = geminiSettings.Value;
 
     private async Task<string> CallGeminiAsync(string prompt)
     {
-        using var client = new HttpClient();
+        var client = httpClientFactory.CreateClient();
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_settings.Model}:generateContent?key={_settings.ApiKey}";
 
         var requestBody = new

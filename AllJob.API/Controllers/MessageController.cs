@@ -45,4 +45,20 @@ public class MessageController(IMessageService messageService) : BaseController
             .GetOrCreateConversationAsync(currentUserId, dto.OtherUserId);
         return Ok(result);
     }
+
+    [HttpPost("send")]
+    public async Task<IActionResult> SendMessage([FromBody] SendMessageDto dto)
+    {
+       
+        var senderId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var isParticipant = await messageService.IsParticipantAsync(senderId, dto.ConversationId);
+        if (!isParticipant)
+            return Forbid();
+
+      
+        var result = await messageService.SendMessageAsync(senderId, dto);
+
+        return Ok(result);
+    }
 }

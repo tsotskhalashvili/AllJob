@@ -22,7 +22,7 @@ public class CvGenerationService(
 {
     private readonly GeminiSettings _settings = geminSettings.Value;
 
-    public async Task<string> GenerateCvAsync(Guid userId)
+    public async Task<string> GenerateCvAsync(Guid userId, string lang)
     {
         var candidate = await candidateRepository.GetCandidateWithDetailsAsync(userId)
             ?? throw new NotFoundException("CandidateProfile", userId);
@@ -31,10 +31,10 @@ public class CvGenerationService(
             string.IsNullOrEmpty(candidate.LastName))
             throw new BadRequestException("First and last name are required");
 
-        if (!candidate.Skills.Any())
-            throw new BadRequestException("At least one skill is required");
+        //if (!candidate.Skills.Any())
+        //    throw new BadRequestException("At least one skill is required");
 
-        var cvSummary = await GenerateCvTextAsync(candidate);
+        var cvSummary = await GenerateCvTextAsync(candidate, lang);
 
         byte[]? photoBytes = null;
         if (!string.IsNullOrEmpty(candidate.PhotoUrl) &&
@@ -64,59 +64,70 @@ public class CvGenerationService(
                uri.Host.EndsWith("res.cloudinary.com");
     }
 
-    private async Task<string> GenerateCvTextAsync(CandidateProfile candidate)
+    private async Task<string> GenerateCvTextAsync(CandidateProfile candidate,string lang)
     {
-        var skills = string.Join(", ", candidate.Skills.Select(s => s.Skill.Name));
 
-        var experiences = candidate.Experiences.Any()
-            ? string.Join("\n", candidate.Experiences.Select(e =>
-                $"- {e.Position} at {e.CompanyName} ({e.StartDate:yyyy} - {(e.EndDate.HasValue ? e.EndDate.Value.ToString("yyyy") : "Present")})"))
-            : "No experience listed";
+        var skills = candidate.Skills != null && candidate.Skills.Any()
+             ? string.Join(", ", candidate.Skills.Select(s => s.Skill.Name))
+             : "Not specified";
+        var profession = candidate.Experiences.FirstOrDefault()?.Position ?? "Professional";
 
-        var educations = candidate.Educations.Any()
-            ? string.Join("\n", candidate.Educations.Select(e =>
-                $"- {e.Degree} at {e.InstitutionName} ({e.StartDate:yyyy} - {(e.EndDate.HasValue ? e.EndDate.Value.ToString("yyyy") : "Present")})"))
-            : "No education listed";
+        // განვსაზღვროთ ენა პრომპტისთვის
+        string targetLanguage = lang.ToLower() == "en" ? "English" : "Georgian";
 
-        var prompt = $"""
-            Generate a professional CV summary for:
-            Name: {candidate.FirstName} {candidate.LastName}
-            Bio: {candidate.Bio}
-            Skills: {skills}
-            Experience:
-            {experiences}
-            Education:
-            {educations}
-            
-            Return a concise professional summary (max 200 words).
-            Do not include any markdown or formatting.
-            """;
-
+        var promptText = $"""
+        Generate a professional CV summary for a {profession} named {candidate.FirstName} {candidate.LastName}.
+        Skills: {skills}.
+        Bio: {candidate.Bio}.
+        
+        Instruction: Write the summary strictly in {targetLanguage} language.
+        Focus on industry-specific achievements. 
+        Return only the summary text, no markdown, max 150 words.
+        """;
         var client = httpClientFactory.CreateClient();
+
+      
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_settings.Model}:generateContent?key={_settings.ApiKey}";
 
         var requestBody = new
         {
             contents = new[]
             {
-                new { parts = new[] { new { text = prompt } } }
+            new
+            {
+                parts = new[]
+                {
+                    new { text = promptText }
+                }
             }
+        }
         };
 
-        var json = JsonSerializer.Serialize(requestBody);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(url, content);
-        response.EnsureSuccessStatusCode();
+        // მოთხოვნის გაგზავნა
+        var response = await client.PostAsJsonAsync(url, requestBody);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorDetail = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Gemini API Error ({response.StatusCode}): {errorDetail}");
+        }
 
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        return result
-            .GetProperty("candidates")[0]
-            .GetProperty("content")
-            .GetProperty("parts")[0]
-            .GetProperty("text")
-            .GetString() ?? string.Empty;
-    }
 
+        try
+        {
+            return result
+                .GetProperty("candidates")[0]
+                .GetProperty("content")
+                .GetProperty("parts")[0]
+                .GetProperty("text")
+                .GetString() ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to parse Gemini response. " + ex.Message);
+        }
+    }
     private byte[] GeneratePdf(CandidateProfile candidate, string cvSummary, byte[]? photoBytes)
     {
         QuestPDF.Settings.License = LicenseType.Community;

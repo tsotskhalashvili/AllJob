@@ -15,11 +15,11 @@ public class AiController(
     [HttpPost("generate-cv")]
     [Authorize(Roles = "Candidate")]
     [EnableRateLimiting("cv-generation")]
-    public async Task<IActionResult> GenerateCv()
+    public async Task<IActionResult> GenerateCv([FromQuery] string lang ="Ka")
     {
         var userId = Guid.Parse(
             User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var url = await cvGenerationService.GenerateCvAsync(userId);
+        var url = await cvGenerationService.GenerateCvAsync(userId,lang);
         return Ok(new { url });
     }
 }

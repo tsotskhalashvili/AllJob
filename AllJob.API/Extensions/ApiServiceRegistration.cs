@@ -137,7 +137,7 @@ namespace AllJob.API.Extensions;
             });
             options.AddFixedWindowLimiter("cv-generation", opt =>
             {
-                opt.PermitLimit = 3;
+                opt.PermitLimit = 20;
                 opt.Window = TimeSpan.FromHours(1);
                 opt.QueueLimit = 0;
             });

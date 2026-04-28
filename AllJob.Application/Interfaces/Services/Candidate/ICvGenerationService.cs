@@ -2,5 +2,5 @@
 
 public interface ICvGenerationService
 {
-    Task<string> GenerateCvAsync(Guid userId); 
+    Task<string> GenerateCvAsync(Guid userId, string lang); 
 }

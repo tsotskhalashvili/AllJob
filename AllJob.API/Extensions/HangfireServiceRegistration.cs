@@ -1,6 +1,5 @@
 ﻿using AllJob.Application.Interfaces.Services.Hangfire;
 using Hangfire;
-using Hangfire.SqlServer;
 
 namespace AllJob.API.Extensions;
 

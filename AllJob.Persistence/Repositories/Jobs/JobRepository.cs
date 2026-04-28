@@ -72,7 +72,7 @@ public class JobRepository(AppDbContext context)
 
     public async Task<Job?> GetJobWithDetailsAsync(Guid id)
         => await _dbSet
-            .AsNoTracking()
+            
             .Include(j => j.Company)
             .Include(j => j.Category)
             .Include(j => j.Address)

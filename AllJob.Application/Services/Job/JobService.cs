@@ -103,10 +103,8 @@ public class JobService(
         var job = await jobRepository.GetJobWithDetailsAsync(id)
             ?? throw new NotFoundException("Job", id);
 
-        var company = await companyRepository.GetByIdAsync(job.CompanyId)
-            ?? throw new NotFoundException("Company", job.CompanyId);
 
-        if (company.UserId != userId)
+        if (job.Company.UserId != userId)
             throw new ForbiddenException();
 
         job.UpdateEntity(dto);

@@ -66,6 +66,8 @@ public class CvGenerationService(
 
     private async Task<string> GenerateCvTextAsync(CandidateProfile candidate,string lang)
     {
+        string normalizedLang = lang?.ToLower() ?? "ka";
+        string targetLanguage = normalizedLang.Contains("en") ? "English" : "Georgian";
 
         var skills = candidate.Skills != null && candidate.Skills.Any()
              ? string.Join(", ", candidate.Skills.Select(s => s.Skill.Name))
@@ -73,16 +75,18 @@ public class CvGenerationService(
         var profession = candidate.Experiences.FirstOrDefault()?.Position ?? "Professional";
 
         // განვსაზღვროთ ენა პრომპტისთვის
-        string targetLanguage = lang.ToLower() == "en" ? "English" : "Georgian";
 
         var promptText = $"""
-        Generate a professional CV summary for a {profession} named {candidate.FirstName} {candidate.LastName}.
+        Generate a professional CV summary for a {profession} named {candidate.FirstName ?? ""} {candidate.LastName ?? ""}.
         Skills: {skills}.
-        Bio: {candidate.Bio}.
+        Bio: {candidate.Bio ?? ""}.
         
-        Instruction: Write the summary strictly in {targetLanguage} language.
-        Focus on industry-specific achievements. 
-        Return only the summary text, no markdown, max 150 words.
+        Instruction: 
+        1. Write the summary strictly in {targetLanguage} language.
+        2. Use the FIRST PERSON (e.g., "I am", "My experience" / "მე ვარ", "ჩემი გამოცდილება").
+        3. Focus on industry-specific achievements. 
+        4. Return ONLY the summary text. No introductory phrases, no conversational text, no markdown.
+        5. Maximum length: 150 words.
         """;
         var client = httpClientFactory.CreateClient();
 

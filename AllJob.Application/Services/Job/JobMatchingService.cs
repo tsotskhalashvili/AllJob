@@ -71,7 +71,7 @@ public class JobMatchingService(
         if (!candidateSkills.Any())
             return new List<JobResponseDto>();
 
-        var jobs = await jobRepository.GetRecentJobsAsync(72);
+        var jobs = await jobRepository.GetRecentJobsAsync(720);
         if (!jobs.Any())
             return new List<JobResponseDto>();
 

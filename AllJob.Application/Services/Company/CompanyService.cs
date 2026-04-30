@@ -10,6 +10,7 @@ using AllJob.Application.Interfaces.Services.Company;
 using AllJob.Application.Interfaces.Services.Notification;
 using AllJob.Application.Mappings;
 using AllJob.Domain.Enums.Auth;
+using AllJob.Domain.Enums.Jobs;
 using AllJob.Domain.Enums.Notifications;
 
 namespace AllJob.Application.Services.Company;
@@ -82,13 +83,20 @@ public class CompanyService(
         CompanyFilterDto filter)
         => await companyRepository.GetPagedCompaniesAsync(filter);
 
-    public async Task<IReadOnlyList<JobResponseDto>> GetCompanyJobsAsync(Guid companyId)
+    public async Task<IReadOnlyList<JobResponseDto>> GetCompanyJobsAsync(
+    Guid companyId, Guid? requestingUserId = null)
     {
         var company = await companyRepository
             .GetCompanyWithDetailsAsync(companyId)
             ?? throw new NotFoundException("Company", companyId);
 
+       
+        if (requestingUserId.HasValue && company.UserId == requestingUserId)
+            return company.Jobs.Select(j => j.ToDto()).ToList();
+
+        
         return company.Jobs
+            .Where(j => j.Status == JobStatus.Active)
             .Select(j => j.ToDto())
             .ToList();
     }

@@ -58,6 +58,10 @@ public class AuthController(
     public async Task<IActionResult> VerifyTwoFactor(
       [FromBody] VerifyTwoFactorDto dto)
     {
+        if (dto is null)
+            throw new Application.Exceptions.BadRequestException(
+                "The request body is empty or the data format is invalid.");
+
         var result = await authService.VerifyTwoFactorAsync(dto);
         return Ok(result);
     }

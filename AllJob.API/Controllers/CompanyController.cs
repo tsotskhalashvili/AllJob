@@ -70,7 +70,10 @@ public class CompanyController(
     [HttpGet("{id}/jobs")]
     public async Task<IActionResult> GetCompanyJobs(Guid id)
     {
-        var result = await companyService.GetCompanyJobsAsync(id);
+        Guid? userId = User.Identity?.IsAuthenticated == true
+            ? Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
+            : null;
+        var result = await companyService.GetCompanyJobsAsync(id, userId);
         return Ok(result);
     }
 

@@ -33,6 +33,10 @@ public class CompanyService(
     public async Task<CompanyResponseDto> CreateCompanyAsync(
       CreateCompanyDto dto, Guid userId)
     {
+        var existing = await companyRepository.GetByUserIdAsync(userId);
+        if (existing is not null)
+            throw new ConflictException("You already have a registered company");
+
         var company = dto.ToEntity(userId);
         await companyRepository.AddAsync(company);
         await unitOfWork.SaveChangesAsync();

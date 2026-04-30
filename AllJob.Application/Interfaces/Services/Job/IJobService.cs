@@ -12,4 +12,6 @@ public interface IJobService
     Task DeleteJobAsync(Guid id, Guid userId);
 
     Task<int> GetApplicationsCountAsync(Guid jobId, Guid userId);
+
+    Task PublishJobAsync(Guid id, Guid userId);
 }

@@ -121,7 +121,7 @@ public class ManagementService(
             throw;
         }
     }
-    public async Task DeleteAdminAsync(Guid adminId)
+    public async Task DeactivateAdminAsync(Guid adminId)
     {
         var admin = await userRepository.GetAdminByIdAsync(adminId)
             ?? throw new NotFoundException("Admin", adminId);

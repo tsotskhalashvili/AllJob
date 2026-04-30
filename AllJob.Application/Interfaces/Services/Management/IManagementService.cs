@@ -8,7 +8,7 @@ public interface IManagementService
     Task AcceptInviteAsync(AcceptInviteDto dto); 
     Task<IReadOnlyList<AdminResponseDto>> GetAllAdminsAsync();
 
-    Task DeleteAdminAsync(Guid adminId);
+    Task DeactivateAdminAsync(Guid adminId);
     Task UpdateAdminRoleAsync(Guid adminId, UpdateAdminRoleDto dto);
     Task UpdatePlanAsync(Guid planId, UpdatePlanDto dto);
     Task<ManagementStatsDto> GetStatsAsync();

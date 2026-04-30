@@ -145,8 +145,24 @@ namespace AllJob.API.Extensions;
             options.RejectionStatusCode = 429;
         });
 
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+                policy
+                    .WithOrigins(
+                        "http://localhost:4200",
+                        "https://your-app.azurestaticapps.net"
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
+        });
+
+
         services.AddMemoryCache();
         services.AddSingleton<ICacheService, CacheService>();
+
 
 
 

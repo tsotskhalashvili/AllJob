@@ -34,14 +34,12 @@ public class ManagementController(
         var result = await managementService.GetAllAdminsAsync();
         return Ok(result);
     }
-
-    [HttpDelete("admins/{id}")]
-    public async Task<IActionResult> DeleteAdmin(Guid id)
+    [HttpPatch("admins/{id}/deactivate")]
+    public async Task<IActionResult> DeactivateAdmin(Guid id)
     {
-        await managementService.DeleteAdminAsync(id);
+        await managementService.DeactivateAdminAsync(id);
         return NoContent();
     }
-
     [HttpPatch("admins/{id}/role")]
     public async Task<IActionResult> UpdateAdminRole(
         Guid id, [FromBody] UpdateAdminRoleDto dto)

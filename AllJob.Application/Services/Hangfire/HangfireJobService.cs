@@ -37,8 +37,12 @@ public class HangfireJobService(
         {
             job.Status = JobStatus.Expired;
             jobRepository.Update(job);
-            await unitOfWork.SaveChangesAsync();
+        }
 
+        await unitOfWork.SaveChangesAsync(); 
+
+        foreach (var job in jobs)
+        {
             await notificationService.CreateAsync(
                 userId: job.Company.UserId,
                 title: NotificationMessages.JobExpiredTitle,
@@ -59,8 +63,12 @@ public class HangfireJobService(
             subscription.IsActive = false;
             subscription.Company.Tier = PlanTier.Free;
             subscriptionRepository.Update(subscription);
-            await unitOfWork.SaveChangesAsync();
+        }
 
+        await unitOfWork.SaveChangesAsync();
+
+        foreach (var subscription in subscriptions)
+        {
             await notificationService.CreateAsync(
                 userId: subscription.Company.UserId,
                 title: NotificationMessages.PlanExpiredTitle,

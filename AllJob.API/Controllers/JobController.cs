@@ -101,4 +101,14 @@ public class JobController(
         return Ok(new { score });
     }
 
+    [Authorize(Roles = "Employer")]
+    [HttpPatch("{id}/publish")]
+    public async Task<IActionResult> PublishJob(Guid id)
+    {
+        var userId = Guid.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        await jobService.PublishJobAsync(id, userId);
+        return NoContent();
+    }
+
 }

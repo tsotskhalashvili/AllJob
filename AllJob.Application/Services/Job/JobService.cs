@@ -9,6 +9,7 @@ using AllJob.Application.Interfaces.Repositories.Subscriptions;
 using AllJob.Application.Interfaces.Services.Job;
 using AllJob.Application.Mappings;
 using AllJob.Domain.Entities.Jobs;
+using AllJob.Domain.Enums.Jobs;
 
 namespace AllJob.Application.Services.Job;
 
@@ -90,7 +91,10 @@ public class JobService(
     public async Task<JobResponseDto> GetJobByIdAsync(Guid id)
     {
         var job = await jobRepository.GetJobWithDetailsAsync(id)
-              ?? throw new NotFoundException("Job", id);
+            ?? throw new NotFoundException("Job", id);
+
+        if (job.Status == JobStatus.Draft)
+            throw new NotFoundException("Job", id);
 
         return job.ToDto();
     }
@@ -120,6 +124,22 @@ public class JobService(
                 }).ToList();
         }
 
+        jobRepository.Update(job);
+        await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task PublishJobAsync(Guid id, Guid userId)
+    {
+        var job = await jobRepository.GetJobWithDetailsAsync(id)
+            ?? throw new NotFoundException("Job", id);
+
+        if (job.Company.UserId != userId)
+            throw new ForbiddenException();
+
+        if (job.Status != JobStatus.Draft)
+            throw new BadRequestException("Only Draft jobs can be published");
+
+        job.Status = JobStatus.Active;
         jobRepository.Update(job);
         await unitOfWork.SaveChangesAsync();
     }

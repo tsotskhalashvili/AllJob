@@ -24,6 +24,9 @@ public class BlogController(
         return Ok(result);
     }
 
+   
+
+
     [AllowAnonymous]
     [HttpGet("{slug}")]
     public async Task<IActionResult> GetBySlug(string slug)
@@ -42,6 +45,17 @@ public class BlogController(
     #endregion
 
     #region Admin
+
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    [HttpGet("Admin")]
+    public async Task<IActionResult> GetAllPosts()
+    {
+        if (!HasAccess(AdminRole.ContentModerator, AdminRole.FullAccess))
+            return Forbid();
+        var result = await contentModeratorService.GetAllBlogPostsAsync();
+        return Ok(result);
+    }
+
     [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] CreateBlogPostDto dto)

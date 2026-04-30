@@ -15,6 +15,8 @@ public abstract class BaseController : ControllerBase
             throw new Application.Exceptions.BadRequestException("The request body is empty or the data format is invalid.");
         }
 
+      
+
         var result = await validator.ValidateAsync(dto);
         if (!result.IsValid)
             throw new Application.Exceptions.ValidationException(

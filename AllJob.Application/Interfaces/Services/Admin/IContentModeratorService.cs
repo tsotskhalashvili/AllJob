@@ -12,8 +12,8 @@ public interface IContentModeratorService
     Task UpdateBlogPostAsync(Guid id, CreateBlogPostDto dto, Guid userId);
     Task PublishBlogPostAsync(Guid id);
     Task DeleteBlogPostAsync(Guid id);
+    Task<IReadOnlyList<BlogPostResponseDto>> GetAllBlogPostsAsync();
 
 
 
-   
 }

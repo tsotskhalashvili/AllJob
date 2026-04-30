@@ -12,14 +12,31 @@ public class BlogRepository(AppDbContext context)
     public async Task<BlogPost?> GetBySlugAsync(string slug)
         => await _dbSet
             .AsNoTracking()
+            .Include(b => b.Author)
             .Include(b => b.Category)
             .FirstOrDefaultAsync(b => b.Slug == slug);
 
     public async Task<IReadOnlyList<BlogPost>> GetAllPublishedAsync()
         => await _dbSet
             .AsNoTracking()
+            .Include(b => b.Author)
             .Include(b => b.Category)
             .Where(b => b.IsPublished)
             .OrderByDescending(b => b.CreatedAt)
             .ToListAsync();
+
+    public async Task<BlogPost?> GetByIdWithDetailsAsync(Guid id)
+    => await _dbSet
+        .AsNoTracking()
+        .Include(b => b.Author)
+        .Include(b => b.Category)
+        .FirstOrDefaultAsync(b => b.Id == id); 
+
+    public async Task<IReadOnlyList<BlogPost>> GetAllWithDetailsAsync()
+      => await _dbSet
+          .AsNoTracking()
+          .Include(b => b.Author)
+          .Include(b => b.Category)
+          .OrderByDescending(b => b.CreatedAt)
+          .ToListAsync();
 }

@@ -21,8 +21,8 @@ public class BogPaymentService(
         InitiatePaymentDto dto, Guid userId)
     {
         var company = await companyRepository
-            .GetCompanyWithDetailsAsync(userId)
-            ?? throw new NotFoundException("Company", userId);
+                  .GetByUserIdAsync(userId)
+                  ?? throw new NotFoundException("Company", userId);
 
         var plan = await planRepository.GetByIdAsync(dto.PlanId)
             ?? throw new NotFoundException("Plan", dto.PlanId);
@@ -86,7 +86,7 @@ public class BogPaymentService(
             await subscriptionRepository.AddAsync(subscription);
         }
 
-        payment.Company.Tier = payment.Plan.Name switch 
+        payment.Company.Tier = payment.Plan.Name switch
         {
             "Standard" => PlanTier.Standard,
             "VIP" => PlanTier.VIP,

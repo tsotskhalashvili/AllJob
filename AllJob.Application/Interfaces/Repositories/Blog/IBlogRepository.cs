@@ -6,5 +6,8 @@ namespace AllJob.Application.Interfaces.Repositories.Blog
     {
         Task<BlogPost?> GetBySlugAsync(string slug);
         Task<IReadOnlyList<BlogPost>> GetAllPublishedAsync();
+        Task<BlogPost?> GetByIdWithDetailsAsync(Guid id);
+
+        Task<IReadOnlyList<BlogPost>> GetAllWithDetailsAsync();
     }
 }

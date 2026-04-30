@@ -31,12 +31,20 @@ public class ContentModeratorService(
     }
 
     public async Task<BlogPostResponseDto> CreateBlogPostAsync(
-        CreateBlogPostDto dto, Guid userId)
+      CreateBlogPostDto dto, Guid userId)
     {
+        var existing = await blogRepository.GetBySlugAsync(dto.Slug);
+        if (existing is not null)
+            throw new ConflictException($"Blog post with slug '{dto.Slug}' already exists");
+
         var post = dto.ToEntity(userId);
         await blogRepository.AddAsync(post);
         await unitOfWork.SaveChangesAsync();
-        return post.ToDto();
+
+        var created = await blogRepository.GetByIdWithDetailsAsync(post.Id)
+            ?? throw new NotFoundException("BlogPost", post.Id);
+
+        return created.ToDto();
     }
 
     public async Task UpdateBlogPostAsync(
@@ -72,5 +80,11 @@ public class ContentModeratorService(
         post.IsPublished = true;
         blogRepository.Update(post);
         await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task<IReadOnlyList<BlogPostResponseDto>> GetAllBlogPostsAsync()
+    {
+        var posts = await blogRepository.GetAllWithDetailsAsync();
+        return posts.Select(p => p.ToDto()).ToList();
     }
 }

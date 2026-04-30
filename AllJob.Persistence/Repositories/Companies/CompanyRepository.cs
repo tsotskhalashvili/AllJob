@@ -13,20 +13,22 @@ namespace AllJob.Persistence.Repositories.Companies;
 public class CompanyRepository(AppDbContext context)
     : GenericRepository<Company>(context), ICompanyRepository
 {
+    public async Task<Company?> GetByUserIdAsync(Guid userId)
+    => await _dbSet
+        .Include(c => c.Payments)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
     public async Task<Company?> GetCompanyWithDetailsAsync(Guid id)
-        => await _dbSet
-            .AsNoTracking()
-            .Include(c => c.Jobs)
-                .ThenInclude(j => j.Company)     // ← ახალი
-            .Include(c => c.Jobs)
-                .ThenInclude(j => j.JobSkills)
-                    .ThenInclude(js => js.Skill)
-            .Include(c => c.Jobs)
-                .ThenInclude(j => j.Category)
-            .Include(c => c.Jobs)
-                .ThenInclude(j => j.Address)
-            .Include(c => c.Reviews)
-            .FirstOrDefaultAsync(c => c.Id == id);
+     => await _dbSet
+         .AsNoTracking()
+         .Include(c => c.Jobs)
+             .ThenInclude(j => j.JobSkills)
+                 .ThenInclude(js => js.Skill)
+         .Include(c => c.Jobs)
+             .ThenInclude(j => j.Category)
+         .Include(c => c.Jobs)
+             .ThenInclude(j => j.Address)
+         .Include(c => c.Reviews)
+         .FirstOrDefaultAsync(c => c.Id == id);
 
     public async Task<int> GetActiveJobsCountAsync(Guid companyId)
         => await _dbSet

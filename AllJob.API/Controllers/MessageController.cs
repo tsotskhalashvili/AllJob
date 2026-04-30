@@ -46,7 +46,7 @@ public class MessageController(IMessageService messageService) : BaseController
         return Ok(result);
     }
 
-    [HttpPost("send")]
+    [HttpPost("send")] //ეს დაავამატე ჩემით
     public async Task<IActionResult> SendMessage([FromBody] SendMessageDto dto)
     {
        

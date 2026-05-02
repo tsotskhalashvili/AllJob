@@ -12,7 +12,7 @@ builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddApiService(builder.Configuration);
 builder.Services.AddHangfireServices(builder.Configuration);
-builder.Services.AddSignalR(); 
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -24,7 +24,22 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-await DataSeeder.SeedAsync(app.Services);
+var retryCount = 0;
+while (retryCount < 5)
+{
+    try
+    {
+        await DataSeeder.SeedAsync(app.Services);
+        break;
+    }
+    catch (Exception)
+    {
+        retryCount++;
+        Console.WriteLine($"DB not ready, retry {retryCount}/5...");
+        await Task.Delay(TimeSpan.FromSeconds(15));
+        if (retryCount == 5) throw;
+    }
+}
 
 app.UseExceptionMiddleware();
 app.UseSerilogRequestLogging();
@@ -43,5 +58,5 @@ app.UseHangfireServices();
 app.UseRateLimiter();
 
 app.MapControllers();
-app.MapHub<ChatHub>("/hubs/chat"); 
+app.MapHub<ChatHub>("/hubs/chat");
 app.Run();

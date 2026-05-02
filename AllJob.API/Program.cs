@@ -3,6 +3,7 @@ using AllJob.API.Hubs;
 using AllJob.Application.Extensions;
 using AllJob.Persistence.Extensions;
 using AllJob.Persistence.Seed;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,14 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider
+        .GetRequiredService<AllJob.Persistence.Context.AppDbContext>();
+    await db.Database.MigrateAsync();
+}
+
 
 var retryCount = 0;
 while (retryCount < 5)

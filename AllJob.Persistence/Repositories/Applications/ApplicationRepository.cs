@@ -22,14 +22,13 @@ public class ApplicationRepository(AppDbContext context)
       => await _dbSet
         .CountAsync(a => a.JobId == jobId);
 
-    public async Task<IReadOnlyList<JobApplication>> GetJobApplicationsAsync(
-     Guid jobId)
-     => await _dbSet
-         .AsNoTracking()
-         .Include(a => a.Job)
-             .ThenInclude(j => j.Company)
-         .Include(a => a.User)
-         .Where(a => a.JobId == jobId)
-         
-         .ToListAsync();
+    public async Task<IReadOnlyList<JobApplication>> GetJobApplicationsAsync(Guid jobId)
+   => await _dbSet
+       .AsNoTracking()
+       .Include(a => a.Job)
+           .ThenInclude(j => j.Company)
+       .Include(a => a.User)
+           .ThenInclude(u => u.CandidateProfile)
+       .Where(a => a.JobId == jobId)
+       .ToListAsync();
 }

@@ -149,14 +149,15 @@ namespace AllJob.API.Extensions;
         services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend", policy =>
-                policy
-                    .WithOrigins(
-                        "http://localhost:4200",
-                        "https://your-app.azurestaticapps.net"
-                    )
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials());
+       policy
+           .WithOrigins(
+               "http://localhost:4200",
+               "https://your-app.azurestaticapps.net",
+               "https://spinning-backpedal-porthole.ngrok-free.dev"
+           )
+           .AllowAnyHeader()
+           .AllowAnyMethod()
+           .AllowCredentials());
         });
 
 

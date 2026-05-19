@@ -46,6 +46,7 @@ public class MessageController(IMessageService messageService) : BaseController
         return Ok(result);
     }
 
+    //swager test
     [HttpPost("send")] 
     public async Task<IActionResult> SendMessage([FromBody] SendMessageDto dto)
     {
@@ -60,5 +61,5 @@ public class MessageController(IMessageService messageService) : BaseController
         var result = await messageService.SendMessageAsync(senderId, dto);
 
         return Ok(result);
-    }
+    }  
 }

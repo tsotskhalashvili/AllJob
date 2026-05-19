@@ -75,6 +75,25 @@ public class CandidateService(
         return updated.ToDto();
     }
 
+    public async Task UpdateSkillsAsync(UpdateCandidateSkillsDto dto, Guid userId)
+{
+    var candidate = await candidateRepository
+        .GetCandidateWithSkillsTrackedAsync(userId)
+        ?? throw new NotFoundException("CandidateProfile", userId);
+
+    candidate.Skills.Clear();
+
+    candidate.Skills = dto.SkillIds
+        .Select(skillId => new CandidateSkill
+        {
+            CandidateProfileId = candidate.Id,
+            SkillId = skillId
+        }).ToList();
+
+    candidateRepository.Update(candidate);
+    await unitOfWork.SaveChangesAsync();
+}
+
     public async Task DeleteProfileAsync(Guid userId)
     {
         var candidate = await candidateRepository

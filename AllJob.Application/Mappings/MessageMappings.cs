@@ -16,13 +16,18 @@ public static class MessageMappings
         );
 
     public static ConversationResponseDto ToDto(this Conversation conversation)
-        => new(
-            Id: conversation.Id,
-            CandidateId: conversation.CandidateId,
-            EmployerId: conversation.EmployerId,
-            LastMessageAt: conversation.LastMessageAt,
-            LastMessage: conversation.Messages
-                .OrderByDescending(m => m.CreatedAt)
-                .FirstOrDefault()?.ToDto()
-        );
+      => new(
+          Id: conversation.Id,
+          CandidateId: conversation.CandidateId,
+          EmployerId: conversation.EmployerId,
+          CandidateName: conversation.Candidate?.CandidateProfile != null
+              ? $"{conversation.Candidate.CandidateProfile.FirstName} {conversation.Candidate.CandidateProfile.LastName}".Trim()
+              : conversation.CandidateId.ToString()[..8],
+          CandidatePhotoUrl: conversation.Candidate?.CandidateProfile?.PhotoUrl ?? "",
+          EmployerName: conversation.Employer?.Email ?? conversation.EmployerId.ToString()[..8],
+          LastMessageAt: conversation.LastMessageAt,
+          LastMessage: conversation.Messages
+              .OrderByDescending(m => m.CreatedAt)
+              .FirstOrDefault()?.ToDto()
+      );
 }

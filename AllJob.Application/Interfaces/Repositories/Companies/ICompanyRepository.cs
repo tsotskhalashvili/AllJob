@@ -13,4 +13,6 @@ public interface ICompanyRepository : IGenericRepository<Company>
     Task<int> GetActiveJobsCountAsync(Guid companyId);
 
     Task<PagedResponseDto<CompanyResponseDto>> GetPagedCompaniesAsync(CompanyFilterDto filter);
+
+    Task<Company?> GetByEmployerIdAsync(Guid employerId);
 }

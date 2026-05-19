@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Candidate;
 using AllJob.Application.Interfaces.Services.Candidate;
+using AllJob.Application.Interfaces.Services.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ namespace AllJob.API.Controllers;
 public class CandidateController(
     ICandidateService candidateService,
     ICandidateExperienceService experienceService,
+     IFileUploadService fileUploadService,
     ICandidateEducationService educationService,
     IValidator<CreateCandidateProfileDto> createValidator,
     IValidator<UpdateCandidateProfileDto> updateValidator,
@@ -64,6 +66,13 @@ public class CandidateController(
         return NoContent();
     }
 
+    [HttpPost("upload-photo")]
+    public async Task<IActionResult> UploadPhoto(IFormFile file)
+    {
+        var url = await fileUploadService.UploadImageAsync(file);
+        return Ok(new { url });
+    }
+
     // Experience
     [HttpPost("experience")]
     public async Task<IActionResult> AddExperience(
@@ -106,6 +115,14 @@ public class CandidateController(
     {
         await ValidateAsync(educationValidator, dto);
         await educationService.UpdateEducationAsync(id, dto, UserId);
+        return NoContent();
+    }
+
+    [HttpPatch("skills")]
+    public async Task<IActionResult> UpdateSkills(
+    [FromBody] UpdateCandidateSkillsDto dto)
+    {
+        await candidateService.UpdateSkillsAsync(dto, UserId);
         return NoContent();
     }
 

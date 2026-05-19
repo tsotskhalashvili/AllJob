@@ -69,4 +69,10 @@ public class CompanyRepository(AppDbContext context)
             PageSize: filter.PageSize
         );
     }
+
+    public async Task<Company?> GetByEmployerIdAsync(Guid employerId)
+    {
+        return await _dbSet
+            .FirstOrDefaultAsync(c => c.UserId == employerId);
+    }
 }

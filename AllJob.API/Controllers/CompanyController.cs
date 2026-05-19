@@ -1,5 +1,6 @@
 ﻿using AllJob.Application.DTOs.Company;
 using AllJob.Application.Interfaces.Services.Company;
+using AllJob.Application.Interfaces.Services.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,8 @@ namespace AllJob.API.Controllers;
 public class CompanyController(
     ICompanyService companyService,
     ICompanyReviewService reviewService,
+    IFileUploadService fileUploadService,
+
     IValidator<CreateCompanyDto> createValidator,
     IValidator<UpdateCompanyDto> updateValidator,
     IValidator<CreateCompanyReviewDto> reviewValidator)
@@ -21,6 +24,15 @@ public class CompanyController(
     public async Task<IActionResult> GetCompanyById(Guid id)
     {
         var result = await companyService.GetCompanyByIdAsync(id);
+        return Ok(result);
+    }
+    [Authorize(Roles = "Employer")]
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyCompany()
+    {
+        var userId = Guid.Parse(User.FindFirst(
+            ClaimTypes.NameIdentifier)!.Value);
+        var result = await companyService.GetMyCompanyAsync(userId);
         return Ok(result);
     }
 
@@ -47,6 +59,14 @@ public class CompanyController(
             ClaimTypes.NameIdentifier)!.Value);
         await companyService.UpdateCompanyAsync(id, dto, userId);
         return NoContent();
+    }
+
+    [Authorize(Roles = "Employer")]
+    [HttpPost("upload-logo")]
+    public async Task<IActionResult> UploadLogo(IFormFile file)
+    {
+        var url = await fileUploadService.UploadImageAsync(file);
+        return Ok(new { url });
     }
 
     [Authorize(Roles = "Employer")]

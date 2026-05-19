@@ -31,6 +31,7 @@ public static class CandidateMappings
 
     public static ExperienceDto ToDto(this CandidateExperience experience)
         => new(
+            Id: experience.Id,
             CompanyName: experience.CompanyName,
             Position: experience.Position,
             StartDate: experience.StartDate,
@@ -50,6 +51,7 @@ public static class CandidateMappings
 
     public static EducationDto ToDto(this CandidateEducation education)
         => new(
+            Id: education.Id,
             InstitutionName: education.InstitutionName,
             Degree: education.Degree.ToString(),
             FieldOfStudy: education.FieldOfStudy,

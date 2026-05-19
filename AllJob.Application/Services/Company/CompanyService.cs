@@ -104,4 +104,10 @@ public class CompanyService(
             .Select(j => j.ToDto())
             .ToList();
     }
+
+    public async Task<CompanyResponseDto?> GetMyCompanyAsync(Guid userId)
+    {
+        var company = await companyRepository.GetByEmployerIdAsync(userId);
+        return company?.ToDto();
+    }
 }

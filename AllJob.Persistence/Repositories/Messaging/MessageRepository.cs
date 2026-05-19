@@ -29,6 +29,9 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
         => await context.Conversations
             .AsNoTracking()
             .Include(c => c.Messages.OrderByDescending(m => m.CreatedAt).Take(1))
+            .Include(c => c.Candidate)
+                .ThenInclude(u => u.CandidateProfile)
+            .Include(c => c.Employer)
             .Where(c => c.CandidateId == userId || c.EmployerId == userId)
             .OrderByDescending(c => c.LastMessageAt)
             .ToListAsync();

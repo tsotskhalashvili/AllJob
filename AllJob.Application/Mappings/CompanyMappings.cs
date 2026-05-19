@@ -9,6 +9,7 @@ public static class CompanyMappings
        => new(
            Id: company.Id,
            Name: company.Name,
+           OwnerUserId:  company.UserId,
            LogoUrl: company.LogoUrl,
            Website: company.Website,
            FacebookUrl: company.FacebookUrl,
@@ -18,6 +19,7 @@ public static class CompanyMappings
            AverageRating: company.Reviews.Any(r => r.IsApproved)
                ? company.Reviews.Where(r => r.IsApproved).Average(r => r.Rating)
                : 0,
+           Tier: company.Tier.ToString(),
            ReviewCount: company.Reviews.Count(r => r.IsApproved),
            CreatedAt: company.CreatedAt
        );

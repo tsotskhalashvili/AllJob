@@ -37,4 +37,9 @@ public class CandidateRepository(AppDbContext context)
              .ThenInclude(cs => cs.Skill)
          .Where(c => c.IsOpenToWork)
          .ToListAsync();
+
+    public async Task<CandidateProfile?> GetCandidateWithSkillsTrackedAsync(Guid userId)
+    => await _dbSet
+        .Include(c => c.Skills)
+        .FirstOrDefaultAsync(c => c.UserId == userId);
 }

@@ -8,4 +8,6 @@ public interface ICandidateRepository : IGenericRepository<CandidateProfile>
     Task<CandidateProfile?> GetCandidateWithDetailsAsync(Guid userId);
     Task<CandidateProfile?> GetByIdWithDetailsAsync(Guid candidateId);
     Task<IReadOnlyList<CandidateProfile>> GetOpenToWorkAsync();
+    Task<CandidateProfile?> GetCandidateWithSkillsTrackedAsync(Guid userId);
+
 }

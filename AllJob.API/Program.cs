@@ -19,6 +19,11 @@ builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
         options.SuppressModelStateInvalidFilter = true;
+    })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -59,8 +64,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireServices();
@@ -69,3 +74,5 @@ app.UseRateLimiter();
 app.MapControllers();
 app.MapHub<ChatHub>("/hubs/chat");
 app.Run();
+
+//zip version from github

@@ -40,13 +40,14 @@ public class SendGridEmailService(
     public async Task SendWelcomeAsync(string toEmail, string fullName)
         => await SendAsync(toEmail, _sendGrid.WelcomeTemplateId, new { fullName });
 
-    public async Task SendAdminInviteAsync(string toEmail, string inviteToken, string role)
-        => await SendAsync(toEmail, _sendGrid.AdminInviteTemplateId, new
-        {
-            inviteLink = $"{_app.BaseUrl}/admin/invite/accept?token={inviteToken}",
-            role
-        });
 
+
+    public async Task SendAdminInviteAsync(string toEmail, string inviteToken, string role)
+    => await SendAsync(toEmail, _sendGrid.AdminInviteTemplateId, new
+    {
+        inviteLink = $"{_app.BaseUrl}/auth/accept-invite?token={Uri.EscapeDataString(inviteToken)}",
+        role
+    });
     public async Task SendApplicationReceivedAsync(string toEmail, string jobTitle)
         => await SendAsync(toEmail, _sendGrid.ApplicationReceivedTemplateId, new { jobTitle });
 

@@ -43,15 +43,18 @@ public class CloudinaryService (IOptions<CloudinarySettings> settings)
 
     public async Task<string> UploadPdfAsync(Stream pdfStream, string fileName)
     {
-        var uploadParams = new RawUploadParams
+        
+        var uploadParams = new ImageUploadParams
         {
             File = new FileDescription(fileName, pdfStream),
             Folder = "allJob/cvs",
-            PublicId = Path.GetFileNameWithoutExtension(fileName)
-
+            PublicId = Path.GetFileNameWithoutExtension(fileName),
+            AccessMode = "public"
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
-        return result.SecureUrl.ToString();
+
+
+        return result.SecureUrl.ToString().Replace("/upload/", "/upload/fl_attachment/");
     }
 }

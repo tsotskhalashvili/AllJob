@@ -4,6 +4,7 @@ public record CompanyResponseDto(
     Guid Id,
     string Name,
     string? LogoUrl,
+     Guid OwnerUserId, //add for messing 
     string? Website,
     string? FacebookUrl,
     string? Description,
@@ -11,5 +12,6 @@ public record CompanyResponseDto(
     bool IsVerified,
     double AverageRating,  
     int ReviewCount,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    string Tier
 );
